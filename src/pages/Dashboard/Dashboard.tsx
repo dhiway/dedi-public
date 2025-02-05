@@ -74,7 +74,7 @@ const Dashboard = () => {
                                 key={`list${i}`}
                             >
                                 <div
-                                    className="m-0 p-0 border transition-all duration-400 ease-in-out border-gray-100 hover:shadow-md h-[120px] rounded"
+                                    className="m-0 p-0 border transition-all duration-400 ease-in-out border-gray-100 shadow-md hover:shadow-xl h-[120px] rounded-lg "
                                     onClick={() => {
                                         navigate({
                                             to: `/records/${creatorId}/${items.namespace}/${items?.registryName}`,
@@ -98,14 +98,14 @@ const Dashboard = () => {
                                                     >
                                                         {items?.registryName.slice(0, 1)}
                                                     </p>
-                                                    <h6 className="font-regular p-0 m-0 ml-3 capitalize text-lg truncate show-1-line-ellipsis pt-0.5">
+                                                    <h6 className="font-regular p-0 m-0 ml-3  text-lg truncate show-1-line-ellipsis pt-0.5 capitalize">
                                                         {items.registryName}
                                                     </h6>
                                                 </div>
 
-                                                <p className="font-regular p-0 m-0  text-sm capitalize pt-0.5 text-sm ml-12 w-[180px]  mb-2s show-1-line-ellipsis">
+                                                {/* <p className="font-regular p-0 m-0  text-sm capitalize pt-0.5 text-sm ml-12 w-[180px]  mb-2s show-1-line-ellipsis">
                                                     {items.description}
-                                                </p>
+                                                </p> */}
                                                 <p className="font-regular ml-12 text-xs p-0 m-0  capitalize text-xs truncate show-1-line-ellipsis pt-0.5 mt-1">
                                                     Records : {items?.record_count}
                                                 </p>

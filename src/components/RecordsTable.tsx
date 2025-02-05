@@ -81,7 +81,7 @@ export default function RecordsTable(props: proptype) {
 
   const TableRender = (data: any) => {
     return (
-      <Table className="border w-full mb-16">
+      <Table className="border w-full mb-16 rounded-lg">
         <TableHeader className="bg-[#FDF2EB]">
           <TableRow>
             {/* <TableHead>Record Id</TableHead> */}
