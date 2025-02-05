@@ -2,7 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import RecordsTable from "@/components/RecordsTable";
-// import useAuthStore from "src/store/authStore";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { useState } from "react";
 
 const Records = () => {
@@ -18,11 +25,23 @@ const Records = () => {
   };
   return (
     <>
+
       <div className="container m-auto max-w-screen-xl mt-10">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            {/* <BreadcrumbItem>
+            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+          </BreadcrumbItem> */}
+          </BreadcrumbList>
+        </Breadcrumb>
         <h1 className="font-semibold text-2xl  mb-2">
           {registryInfo.registry_name}
         </h1>
-        <div className=" mt-2">
+        <div className=" mt-4">
           <RecordsTable
             refreshTable={refreshTable}
             singleRecordDetails={(data) => showSingleRecords(data)}
@@ -34,7 +53,7 @@ const Records = () => {
         onOpenChange={() => setShowRecordDetails((s) => !s)}
       >
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="max-h-fit p-0 max-w-lg mx-auto gap-0 p-12">
+        <DialogContent className="max-h-fit p-0 max-w-fit mx-auto gap-0 p-12 px-8">
           <DialogTitle className=" h-0 text-xl font-semibold justify-center leading-none mb-4">
             Record Details
           </DialogTitle>
