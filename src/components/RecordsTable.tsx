@@ -27,7 +27,6 @@ export default function RecordsTable(props: proptype) {
   }); // Removed unused 'creatorId'
   const [data, setData] = useState<any>([]);
   const [inProgress, setInprogress] = useState<any>(false);
-  const [recordItemsRevoke, setRevokeRecordItem] = useState<any>([]);
   const { toast } = useToast();
 
   const fetchRecords = async () => {
@@ -142,29 +141,6 @@ export default function RecordsTable(props: proptype) {
                             >
                               Copy Lookup
                             </li>
-                            {!record.revoked && (
-                              <li
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-[150px] z text-xs"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  revokeRecord(record);
-                                }}
-                              // disabled={inProgress}
-                              >
-                                Revoke Record
-                              </li>
-                            )}
-                            {!record.revoked && (
-                              <li
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-[150px] z text-xs cursor-no-drop"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateRecordModal(true, record);
-                                }}
-                              >
-                                Edit Record
-                              </li>
-                            )}
                           </ul>
                         </div>
                       </div>
@@ -182,7 +158,7 @@ export default function RecordsTable(props: proptype) {
   return (
     <>
       {inProgress ? (
-        <h1 className="text-center">...Loading</h1>
+        <h1 className="text-center text-base">...Loading</h1>
       ) : data.length > 0 ? (
         <TableRender data={data} />
       ) : (
