@@ -3,6 +3,7 @@ import { useToast } from "src/hooks/use-toast";
 import axios, { isAxiosError } from "axios";
 import { useNavigate } from "@tanstack/react-router";
 import { getRandomColor } from "src/utils/getRandomColor";
+import Header from "@/components/header/Header";
 
 // Define Directory item type
 type DirectoryItem = {
@@ -62,6 +63,7 @@ const Dashboard = () => {
 
     return (
         <>
+            <Header />
             <div className="container m-auto max-w-screen-xl mt-14">
                 <div className="flex flex-row">
                     <h1 className="font-semibold text-2xl">Directory</h1>
