@@ -11,6 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { useState } from "react";
+import Header from "@/components/header/Header";
 
 const Records = () => {
   // const auth = useAuthStore((state: any) => state.auth);
@@ -25,7 +26,7 @@ const Records = () => {
   };
   return (
     <>
-
+      <Header />
       <div className="container m-auto max-w-screen-xl mt-10">
         <Breadcrumb>
           <BreadcrumbList>
