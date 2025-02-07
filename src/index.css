@@ -127,11 +127,11 @@ h1 {
  }
  
  .blockspinn > div {
-  background-color: #374251;
+  background-color: #EBEBEB;
   height: 100%;
   position: absolute;
   width: 100%;
-  border: 2px solid #213547;
+  border: 2px solid #817d7a;
  }
  
  .blockspinn div:nth-of-type(1) {

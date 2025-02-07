@@ -7,6 +7,7 @@ import PuffLoader from "react-spinners/PuffLoader";
 import * as Cord from "@cord.network/sdk";
 import { Buffer } from "buffer";
 import Loader from "./Loadertext";
+import Header from "@/components/header/Header";
 
 const Watcher = () => {
     const divRef = useRef(null);
@@ -47,6 +48,7 @@ const Watcher = () => {
                     });
 
                     if (newEvents.length > 0) {
+                        console.log("heredata",newEvents);
                         setEventsList((prev) => [...prev, ...newEvents]);
                     }
                 });
@@ -84,9 +86,10 @@ const Watcher = () => {
         }
     }, []);
     return (
-        <div className="bg-[#101726] text-white min-h-screen">
-            <div className='flex flex-row '>
-            <div className='w-[100%] bg-[#1f2937] flex mt-10 mx-10 rounded-xl'>
+        <div className="bg-white text-black min-h-screen">
+            <Header/>
+           
+            <div className='w-[100%] bg-white flex-row flex mt-5 mx-5 rounded-xl  justify-center'>
             {/* <div className='w-[50%] '>
                     <div className='px-20 py-5'>
                   
@@ -115,30 +118,30 @@ const Watcher = () => {
                    
                     </div>
                 </div> */}
-                <div className='w-[100%]'>
+                <div className='w-[85%]'>
                 
-                <div className='px-20 py-5'>
-                            <Label className='font-regular text-base text-gray-400' htmlFor="search-identity">
+                <div className='px-20 py-3'>
+                            <Label className='font-bold text-base text-gray-800 ' htmlFor="search-identity">
                                 Watch Identifier
                             </Label>
                             <Input
                                 id="search-identity"
                                 type="text"
                                   placeholder="Watch event identifier..."
-                                className="mt-3 p-6 text-white border-[#4b5663] bg-[#374251] font-bold"
+                                className="mt-3 p-6 text-gray-700 border-gray-300 bg-gray-200 font-bold hover:border-gray-400 focus-visible:ring-0"
                                 onChange={(e: any) => {
                                     setIdentifierForWatch(e.target.value)
                                 }}
                             />
                             <Button
                                 id="first-create"
-                                className="cursor-pointer bg-transparent mt-3 font-regular text-base text-white transition-all rounded-lg hover:to-indigo-600 bg-gradient-to-b from-indigo-300 via-indigo-400 to-indigo-500 hover:text-white"
+                                className="cursor-pointer bg-transparent mt-3 hover:bg-blue-500 text-blue-700 font-semibold hover:text-gray-800 py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                                 onClick={() => {
                                     toast({
                                         variant: "default",
-                                        title: `Watching on ${identifierForWatch} has started`,
+                                        title: `Watching on identifier ${identifierForWatch} has started`,
                                         description: "",
-                                        className: "bg-transparent text-white",
+                                        className: "bg-transparent text-gray-800",
                                     })
                                     handleEvent();
                                 }}
@@ -149,37 +152,44 @@ const Watcher = () => {
                         </div>
                 </div>
                 </div>
-                </div>
-                <div className=' rounded mt-5 text-white' ref={divRef}>
-                            {wathcingevent && eventsList && eventsList.length == 0 &&
-                                // <PuffLoader
-                                //     color="#9fa5c6"
-                                //     className='h-full ml-[45%] position-relative z-index-9999'
-                                //     size={height}
+              
+                <div className="rounded text-white w-full flex flex-col justify-center items-center" ref={divRef}>
+          
 
-                                // />
-                                <Loader/>
-                            }
-                            {/* {eventsList && eventsList.length > 0 &&
-                                <p id="event" className='text-white w-fit text-sm text-start overflow-auto w-[100%] '>{JSON.stringify(eventsList, null, 2)}</p>
-                                 
-                            } */}
-                                  {eventsList && eventsList.length > 0 &&
-                             eventsList.map((event,index)=>{
-                                const colorIndex = index > 3 ? index % myColors.length : index;
-                                return (
-                                    <div className={`w-100 bg-[#1f2937] p-5 mx-10 my-2 border-l-4 ${myColors[colorIndex]} shadow-md rounded-xl`}>
-                                        <p className="text-gray-200"><span className="font-bold">Message :</span> {event.message}</p>
-                                        <p className="text-gray-200"><span className="font-bold">Author :</span> {event.author}</p>
-                                        <p className="text-gray-200"><span className="font-bold">Blockhash :</span> {event.blockhash}</p>
-                                    </div>
-                                )
-                             })
-                                 
-                            }
-                            <div className=''></div>
-
+        {eventsList && eventsList.length > 0 && (
+        <div className="w-[85%] max-h-[65vh] overflow-y-auto rounded-md p-4 scrollbar-thin scrollbar-thumb-black-500 scrollbar-track-black-300">
+            <div className="w-full flex flex-col items-center">
+                {eventsList.map((event, index) => {
+                    const colorIndex = index > 3 ? index % myColors.length : index;
+                    return (
+                        <div
+                            key={index}
+                            className={`w-[85%] p-5 my-2 border-l-4 ${myColors[colorIndex]} shadow-md rounded-md bg-white`}
+                        >
+                            <p className="text-gray-800">
+                                <span className="font-bold">Message :</span> {event.message}
+                            </p>
+                            <p className="text-gray-800">
+                                <span className="font-bold">Author :</span> {event.author}
+                            </p>
+                            <p className="text-gray-800">
+                                <span className="font-bold">Blockhash :</span> <a
+                href={`https://apps.cord.network/?rpc=wss://registries.demo.cord.network/#/explorer/query/${event.blockhash}`} // Replace with your explorer URL
+                target="_blank"
+                rel="noopener noreferrer"
+                className=" text-skyblue-500 hover:text-blue-700" // Basic link styling
+              >{event.blockhash}</a>
+                            </p>
                         </div>
+                    );
+                })}
+            </div>
+            </div>
+        )}
+
+        {wathcingevent && <Loader />}
+        </div>
+
         
         </div>
     )

@@ -35,7 +35,7 @@ const Loader = () => {
 
   return (
     <div>
-    <div className="flex justify-center items-center w-[100%] mt-20">
+    <div className="flex justify-center items-center w-[100%] mt-10">
     < div className="blockspinn">
     <div></div>
     <div></div>
@@ -45,9 +45,9 @@ const Loader = () => {
     <div></div>
     </div>
     </div>
-    <div className="flex justify-center items-center mt-10"> {/* Centering on screen */}
+    <div className="flex justify-center items-center mt-8"> {/* Centering on screen */}
 
-      <h1 className="text-2xl text-gray-600 font-bold"> {/* Increased size, improved contrast */}
+      <h1 className="text-xl text-gray-600 font-bold"> {/* Increased size, improved contrast */}
         <AnimatedText phrases={loadingPhrases} />
       </h1>
     </div>
