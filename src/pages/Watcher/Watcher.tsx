@@ -19,6 +19,7 @@ const Watcher = () => {
     const myColors = ['border-green-500','border-red-500','border-yellow-500'];
     const unsubscribeRef = useRef<(() => void) | null>(null);
 
+    
     const getEvents = (identifier: string) => {
         let unsubscribe: () => void;
 
@@ -45,6 +46,13 @@ const Watcher = () => {
                                     blockhash: events.createdAtHash?.toString(),
                                 };
                                 newEvents.push(obj);
+                                if (Notification.permission === "granted") {
+                                    new Notification("New Event Received", {
+                                        body: obj.message,
+                                        icon: "", // Optional: add a notification icon
+                                    });
+                                }
+        
                             }
                         }
                     });
@@ -73,8 +81,12 @@ const Watcher = () => {
     }
 
     const handleEvent = () => {
+      
         if (identifierForWatch.trim()) {
             if (window.eventManager) {
+                if (Notification.permission === "default") {
+                    Notification.requestPermission();
+                }
                 setWatchingEvent(true);
                 toast({
                     variant: "default",
