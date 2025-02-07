@@ -46,12 +46,6 @@ const Watcher = () => {
                                     blockhash: events.createdAtHash?.toString(),
                                 };
                                 newEvents.push(obj);
-                                if (Notification.permission === "granted") {
-                                    new Notification("New Event Received", {
-                                        body: obj.message,
-                                        icon: "", // Optional: add a notification icon
-                                    });
-                                }
         
                             }
                         }
@@ -84,9 +78,6 @@ const Watcher = () => {
       
         if (identifierForWatch.trim()) {
             if (window.eventManager) {
-                if (Notification.permission === "default") {
-                    Notification.requestPermission();
-                }
                 setWatchingEvent(true);
                 toast({
                     variant: "default",
