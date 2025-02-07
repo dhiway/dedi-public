@@ -45,7 +45,6 @@ const Watcher = () => {
                     });
 
                     if (newEvents.length > 0) {
-                     
                         setEventsList((prev) => [...prev, ...newEvents]);
                     }
                 });
