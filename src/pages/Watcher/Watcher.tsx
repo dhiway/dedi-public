@@ -17,6 +17,8 @@ const Watcher = () => {
     const [wathcingevent,setWatchingEvent] = useState(false);
     const [eventsList, setEventsList] = useState<{ message: string; author: string; blockhash?: string }[]>([]);
     const myColors = ['border-green-500','border-red-500','border-yellow-500'];
+    const unsubscribeRef = useRef<(() => void) | null>(null);
+
     const getEvents = (identifier: string) => {
         let unsubscribe: () => void;
 
@@ -26,7 +28,7 @@ const Watcher = () => {
                 await Cord.connect("wss://registries.demo.cord.network");
                 const api = Cord.ConfigService.get("api");
 
-                unsubscribe = await api.query.system.events((events) => {
+                    unsubscribeRef.current = await api.query.system.events((events) => {
 
                     const newEvents: any[] = [];
 
@@ -48,7 +50,13 @@ const Watcher = () => {
                     });
 
                     if (newEvents.length > 0) {
-                        console.log("heredata",newEvents);
+                   
+                        toast({
+                            variant: "default",
+                            title: `Entry Updated`,
+                            description: "",
+                            className: "bg-transparent text-gray-800",
+                        })
                         setEventsList((prev) => [...prev, ...newEvents]);
                     }
                 });
@@ -59,15 +67,21 @@ const Watcher = () => {
 
         fetchEvents();
 
-        return () => {
-            if (unsubscribe) unsubscribe();
-        };
+        // return () => {
+        //     if (unsubscribe) unsubscribe();
+        // };
     }
 
     const handleEvent = () => {
-        setWatchingEvent(true);
         if (identifierForWatch.trim()) {
             if (window.eventManager) {
+                setWatchingEvent(true);
+                toast({
+                    variant: "default",
+                    title: `Watching on identifier ${identifierForWatch} has started`,
+                    description: "",
+                    className: "bg-transparent text-gray-800",
+                })
                 window.eventManager(identifierForWatch);
                 setTimeout(() => {
                     getEvents(identifierForWatch)
@@ -79,6 +93,19 @@ const Watcher = () => {
             alert("Please enter a valid identifier.");
         }
     };
+
+    const stopWatching = () => {
+        if (unsubscribeRef.current) {
+            unsubscribeRef.current(); // Unsubscribe from events
+            unsubscribeRef.current = null;
+            setWatchingEvent(false);
+            toast({
+                variant: "destructive",
+                title: `Stopped watching events`,
+            });
+        }
+    };
+
     useEffect(() => {
         if (divRef.current) {
             setHeight(divRef.current.offsetHeight);
@@ -118,7 +145,7 @@ const Watcher = () => {
                    
                     </div>
                 </div> */}
-                <div className='w-[85%]'>
+                <div className='w-[60%]'>
                 
                 <div className='px-20 py-3'>
                             <Label className='font-bold text-base text-gray-800 ' htmlFor="search-identity">
@@ -137,18 +164,17 @@ const Watcher = () => {
                                 id="first-create"
                                 className="cursor-pointer bg-transparent mt-3 hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                                 onClick={() => {
-                                    toast({
-                                        variant: "default",
-                                        title: `Watching on identifier ${identifierForWatch} has started`,
-                                        description: "",
-                                        className: "bg-transparent text-gray-800",
-                                    })
-                                    handleEvent();
+                                    if (wathcingevent) {
+                                        stopWatching();
+                                    } else {
+                                        handleEvent();
+                                    }
                                 }}
                                 variant="outline"
                             >
-                                Watch
+                             { wathcingevent ? 'Stop Watch' : 'Watch'}
                             </Button>
+                  
                         </div>
                 </div>
                 </div>
