@@ -16,7 +16,7 @@ import Header from "@/components/header/Header";
 const Records = () => {
   // const auth = useAuthStore((state: any) => state.auth);
   const [refreshTable, setRefreshTable] = useState(0);
-  const [registryInfo, setregistryInfo] = useState(false);
+  const [registryInfo, setRegistryInfo] = useState(false);
   const [showRecordDetails, setShowRecordDetails] = useState(false);
   const [recordDetailsSingle, setRecordDetailsSingle] = useState();
   // const [recordEditEntries, setRecordEditEntries] = useState<any[]>([]);
@@ -28,24 +28,22 @@ const Records = () => {
     <>
       <Header />
       <div className="container m-auto max-w-screen-xl mt-10">
-        <Breadcrumb>
+        {/* <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            {/* <BreadcrumbItem>
-            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-          </BreadcrumbItem> */}
           </BreadcrumbList>
-        </Breadcrumb>
-        <h1 className="font-semibold text-2xl  mb-2">
+        </Breadcrumb> */}
+        <h1 className="font-semibold text-2xl  mb-2 capitalize">
           {registryInfo.registry_name}
         </h1>
         <div className=" mt-4">
           <RecordsTable
             refreshTable={refreshTable}
             singleRecordDetails={(data) => showSingleRecords(data)}
+            showRecordInfo={(data)=>setRegistryInfo(data)}
           />
         </div>
       </div>
