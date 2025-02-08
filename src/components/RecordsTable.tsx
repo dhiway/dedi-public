@@ -20,6 +20,7 @@ type proptype = {
   hideRevokeModal: (isOpen: boolean) => void;
   setRecordUpdateDetails: (data: { details: Record<string, any> }) => void;
   singleRecordDetails: (data: { details: Record<string, any> }) => void;
+  showRecordInfo: (data: { details: Record<string, any> }) => void;
 };
 export default function RecordsTable(props: proptype) {
   const { nameSpaceId, directory } = useParams({
@@ -38,6 +39,7 @@ export default function RecordsTable(props: proptype) {
       );
       setInprogress(false);
       setData(Object.values(response?.data?.records));
+      props.showRecordInfo(response?.data)
     } catch (error) {
       if (isAxiosError(error)) {
         const resData = error.response;
