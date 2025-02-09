@@ -125,7 +125,7 @@ export default function RecordsTable(props: proptype) {
                               e.stopPropagation();
                             }}
                           >
-                            <div className="pr-2 text-start">
+                            <div className="pr-2 text-start absolute top-[6px]">
                               <img
                                 src="https://studiodemo.dhiway.com/static/media/dots.8c12d8cedba6fe388496b89ac96ee7cc.svg"
                                 alt="space-image"
@@ -133,7 +133,7 @@ export default function RecordsTable(props: proptype) {
                               />
                             </div>
                           </button>
-                          <ul className="absolute left-0 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                          <ul className="absolute  left-[-120px] hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg z-10">
                             <li
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-[150px] z text-xs"
                               onClick={(e) => {
