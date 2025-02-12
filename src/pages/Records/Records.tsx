@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import RecordsTable from "@/components/RecordsTable";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+// import {
+//   Breadcrumb,
+//   BreadcrumbItem,
+//   BreadcrumbLink,
+//   BreadcrumbList,
+//   BreadcrumbPage,
+//   BreadcrumbSeparator,
+// } from "@/components/ui/breadcrumb"
 import { useState } from "react";
 import Header from "@/components/header/Header";
 
@@ -43,7 +43,7 @@ const Records = () => {
           <RecordsTable
             refreshTable={refreshTable}
             singleRecordDetails={(data) => showSingleRecords(data)}
-            showRecordInfo={(data)=>setRegistryInfo(data)}
+            showRecordInfo={(data) => setRegistryInfo(data)}
           />
         </div>
       </div>

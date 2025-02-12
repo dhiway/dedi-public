@@ -60,7 +60,7 @@ export default function RecordsTable(props: proptype) {
   }, []);
 
   const generateRecordLookUp = (item: any) => {
-    let url = `${import.meta.env.VITE_API_ENDPOINT}/dedi/lookup/${nameSpaceId}/${directory}/${item.recordName}`;
+    let url = `${import.meta.env.VITE_API_ENDPOINT}/dedi/lookup/${nameSpaceId}/${directory}/${item.record_name}`;
     navigator.clipboard
       .writeText(url)
       .then(() =>
@@ -103,7 +103,7 @@ export default function RecordsTable(props: proptype) {
                   className="cursor-pointer"
                 >
                   {/* <TableCell>{record.recordId}</TableCell> */}
-                  <TableCell>{record.recordName}</TableCell>
+                  <TableCell>{record.record_name}</TableCell>
                   <TableCell>{record.digest}</TableCell>
                   <TableCell>
                     {record.revoked ? (
