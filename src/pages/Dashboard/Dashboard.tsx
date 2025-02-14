@@ -7,7 +7,7 @@ import Header from "@/components/header/Header";
 
 // Define Directory item type
 type DirectoryItem = {
-    registryName: string;
+    registry_name: string;
     description: string;
     schemaId: string;
     schema: string;
@@ -47,7 +47,7 @@ const Dashboard = () => {
     };
 
     const generateDirectoryLookUp = (item: any) => {
-        const decodedText = decodeURIComponent(item?.registryName);
+        const decodedText = decodeURIComponent(item?.registry_name);
         let url = `${import.meta.env.VITE_API_ENDPOINT}/dedi/lookup/${item.namespace}/${decodedText}`;
         navigator.clipboard
             .writeText(url)
@@ -79,7 +79,7 @@ const Dashboard = () => {
                                     className="m-0 p-0 border transition-all duration-400 ease-in-out border-gray-100 shadow-md hover:shadow-xl h-[120px] rounded-lg "
                                     onClick={() => {
                                         navigate({
-                                            to: `/records/${creatorId}/${items.namespace}/${items?.registryName}`,
+                                            to: `/records/${creatorId}/${items.namespace}/${items?.registry_name}`,
                                         });
                                     }}
                                 >
@@ -90,7 +90,7 @@ const Dashboard = () => {
                                                     className="w-full h-full overflow-hidden flex flex-row"
                                                     onClick={() => {
                                                         navigate({
-                                                            to: `/records/${creatorId}/${items.namespace}/${items?.registryName}`,
+                                                            to: `/records/${creatorId}/${items.namespace}/${items?.registry_name}`,
                                                         });
                                                     }}
                                                 >
@@ -98,10 +98,10 @@ const Dashboard = () => {
                                                         className="ml-2 rounded-full w-[28px] h-[28px] text-center capitalize text-sm pt-1 mt-0.5"
                                                         style={{ backgroundColor: getRandomColor() }}
                                                     >
-                                                        {items?.registryName.slice(0, 1)}
+                                                        {items?.registry_name.slice(0, 1)}
                                                     </p>
                                                     <h6 className="font-regular p-0 m-0 ml-3  text-lg truncate show-1-line-ellipsis pt-0.5 capitalize">
-                                                        {items.registryName}
+                                                        {items.registry_name}
                                                     </h6>
                                                 </div>
 
