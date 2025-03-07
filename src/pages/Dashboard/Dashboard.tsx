@@ -84,10 +84,10 @@ const Dashboard = () => {
                                     }}
                                 >
                                     <div className="flex justify-between px-3">
-                                        <div className="space-head-details-dashboard flex-1">
+                                        <div className="space-head-details-dashboard w-4/5">
                                             <div className="flex flex-col mt-4">
                                                 <div
-                                                    className="w-full h-full overflow-hidden flex flex-row"
+                                                    className=" h-full overflow-hidden flex flex-row"
                                                     onClick={() => {
                                                         navigate({
                                                             to: `/records/${creatorId}/${items.namespace}/${items?.registry_name}`,
@@ -95,7 +95,7 @@ const Dashboard = () => {
                                                     }}
                                                 >
                                                     <p
-                                                        className="ml-2 rounded-full w-[28px] h-[28px] text-center capitalize text-sm pt-1 mt-0.5"
+                                                        className="ml-2 rounded-full w-[28px] h-[28px] aspect-square text-center capitalize text-sm pt-1 mt-0.5"
                                                         style={{ backgroundColor: getRandomColor() }}
                                                     >
                                                         {items?.registry_name.slice(0, 1)}
