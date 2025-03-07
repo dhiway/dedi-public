@@ -12,6 +12,7 @@ import RecordsTable from "@/components/RecordsTable";
 // } from "@/components/ui/breadcrumb"
 import { useState } from "react";
 import Header from "@/components/header/Header";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 const Records = () => {
   // const auth = useAuthStore((state: any) => state.auth);
@@ -28,14 +29,17 @@ const Records = () => {
     <>
       <Header />
       <div className="container m-auto max-w-screen-xl mt-10">
-        {/* <Breadcrumb>
+         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="capitalize">{registryInfo.registry_name}</BreadcrumbPage>
+            </BreadcrumbItem>
           </BreadcrumbList>
-        </Breadcrumb> */}
+        </Breadcrumb> 
         <h1 className="font-semibold text-2xl  mb-2 capitalize">
           {registryInfo.registry_name}
         </h1>
