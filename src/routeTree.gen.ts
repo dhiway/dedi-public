@@ -14,7 +14,6 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as WatcherImport } from './routes/watcher'
-import { Route as RecordsCreatorIdNameSpaceIdDirectoryImport } from './routes/records/$creatorId.$nameSpaceId.$directory'
 
 // Create Virtual Routes
 
@@ -34,13 +33,6 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const RecordsCreatorIdNameSpaceIdDirectoryRoute =
-  RecordsCreatorIdNameSpaceIdDirectoryImport.update({
-    id: '/records/$creatorId/$nameSpaceId/$directory',
-    path: '/records/$creatorId/$nameSpaceId/$directory',
-    getParentRoute: () => rootRoute,
-  } as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -59,13 +51,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatcherImport
       parentRoute: typeof rootRoute
     }
-    '/records/$creatorId/$nameSpaceId/$directory': {
-      id: '/records/$creatorId/$nameSpaceId/$directory'
-      path: '/records/$creatorId/$nameSpaceId/$directory'
-      fullPath: '/records/$creatorId/$nameSpaceId/$directory'
-      preLoaderRoute: typeof RecordsCreatorIdNameSpaceIdDirectoryImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -74,46 +59,36 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/watcher': typeof WatcherRoute
-  '/records/$creatorId/$nameSpaceId/$directory': typeof RecordsCreatorIdNameSpaceIdDirectoryRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/watcher': typeof WatcherRoute
-  '/records/$creatorId/$nameSpaceId/$directory': typeof RecordsCreatorIdNameSpaceIdDirectoryRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/watcher': typeof WatcherRoute
-  '/records/$creatorId/$nameSpaceId/$directory': typeof RecordsCreatorIdNameSpaceIdDirectoryRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/watcher' | '/records/$creatorId/$nameSpaceId/$directory'
+  fullPaths: '/' | '/watcher'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/watcher' | '/records/$creatorId/$nameSpaceId/$directory'
-  id:
-    | '__root__'
-    | '/'
-    | '/watcher'
-    | '/records/$creatorId/$nameSpaceId/$directory'
+  to: '/' | '/watcher'
+  id: '__root__' | '/' | '/watcher'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   WatcherRoute: typeof WatcherRoute
-  RecordsCreatorIdNameSpaceIdDirectoryRoute: typeof RecordsCreatorIdNameSpaceIdDirectoryRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   WatcherRoute: WatcherRoute,
-  RecordsCreatorIdNameSpaceIdDirectoryRoute:
-    RecordsCreatorIdNameSpaceIdDirectoryRoute,
 }
 
 export const routeTree = rootRoute
@@ -127,8 +102,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/watcher",
-        "/records/$creatorId/$nameSpaceId/$directory"
+        "/watcher"
       ]
     },
     "/": {
@@ -136,9 +110,6 @@ export const routeTree = rootRoute
     },
     "/watcher": {
       "filePath": "watcher.tsx"
-    },
-    "/records/$creatorId/$nameSpaceId/$directory": {
-      "filePath": "records/$creatorId.$nameSpaceId.$directory.tsx"
     }
   }
 }
