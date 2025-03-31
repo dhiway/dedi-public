@@ -2,7 +2,7 @@ import DarkModeToggle from "../DarkMode/DarkModeToggle";
 
 const Header = () => {
   return (
-    <div className="relative  w-full h-[30%] bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-left text-left px-4">
+    <div className="relative  w-full h-[30%] bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-center text-center px-4">
       {/* Heading */}
       <h1 className="text-white text-4xl font-bold uppercase">
         Namespace Registry
