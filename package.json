@@ -10,11 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cord.network/network": "0.9.4",
-    "@cord.network/sdk": "0.9.4",
     "@tailwindcss/vite": "^4.0.15",
     "@tanstack/react-router": "^1.114.27",
     "axios": "^1.8.4",
+    "lucide-react": "^0.485.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
