@@ -6,7 +6,7 @@ type cardProps = {
   imageUrl: string;
 };
 
-const colors = ["#445819", "#34495E", "#8E44AD"];
+const colors = ["#445819", "#B1C29E", "#27548A", "#4F959D", "#9F8383"];
 
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
@@ -15,16 +15,20 @@ const Card = ({ title, description, imageUrl }: cardProps) => {
 
   return (
     <div
-      className="rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out hover:cursor-pointer"
-      style={{ backgroundColor: bgColor }} // ✅ Set background color dynamically
+      className="rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out hover:cursor-pointer p-1"
+      style={{ backgroundColor: bgColor }}
     >
       {/* Card Image */}
       <div className="relative">
-        <img src={imageUrl} alt={title} className="w-full h-45 object-fit" />
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-45 object-fit rounded-xl"
+        />
         <div
           className="absolute bottom-0 left-0 w-full h-30"
           style={{
-            background: `linear-gradient(to top, ${bgColor}, transparent)`, // ✅ Apply gradient dynamically
+            background: `linear-gradient(to top, ${bgColor}, transparent)`,
           }}
         ></div>
       </div>
