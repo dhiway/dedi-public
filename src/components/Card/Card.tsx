@@ -34,11 +34,11 @@ const Card = ({ title, description, imageUrl }: cardProps) => {
       </div>
 
       {/* Card Header */}
-      <div className="p-5">
+      <div className="p-3">
         <div className="uppercase tracking-wide text-white font-bold text-xl">
           {title}
         </div>
-        <p className="mt-2 text-white">{description}</p>
+        <p className="mt-1 text-white">{description}</p>
       </div>
     </div>
   );
