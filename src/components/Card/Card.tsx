@@ -4,19 +4,21 @@ type cardProps = {
   title: string;
   description: string;
   imageUrl: string;
+  onClick?: () => void;
 };
 
 const colors = ["#445819", "#B1C29E", "#27548A", "#4F959D", "#9F8383"];
 
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
-const Card = ({ title, description, imageUrl }: cardProps) => {
+const Card = ({ title, description, imageUrl, onClick }: cardProps) => {
   const bgColor = useMemo(getRandomColor, []);
 
   return (
     <div
       className="rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out hover:cursor-pointer p-1"
       style={{ backgroundColor: bgColor }}
+      onClick={onClick} 
     >
       {/* Card Image */}
       <div className="relative">
