@@ -1,8 +1,10 @@
+import { useNavigate } from "@tanstack/react-router";
 import Card from "../../components/Card/Card";
 import Doctorimg from "../../assets/doctor.jpg";
 import demoimg from "../../assets/demo.jpg";
 import demo2 from "../../assets/demo2.jpg";
 import Header from "../../components/Header/Header";
+
 
 const dummyData = [
   {
@@ -88,6 +90,8 @@ const dummyData = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text ">
       <Header />
@@ -111,6 +115,11 @@ const Dashboard = () => {
               imageUrl={item.meta.image}
               title={item.meta.displayName}
               description={item.description}
+              onClick={() => navigate({ 
+                  to: "/registries/$namespace_id", 
+                  params: { namespace_id: item.namespace_id } 
+                })}
+
             />
           ))}
         </div>
