@@ -1,8 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
+import Registry from "../pages/Registry/Registry";
 
-import RegistryDetail from '../pages/Dashaboard/RegistryDetails';
-
-export const Route = createFileRoute('/registries')({
-  component: RegistryDetail,
+export const Route = createFileRoute("/registries")({
+  component: Registry,
 });
-
