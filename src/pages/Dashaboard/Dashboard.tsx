@@ -5,19 +5,14 @@ import Doctorimg from "../../assets/doctor.jpg";
 import demoimg from "../../assets/demo.jpg";
 import demo2 from "../../assets/demo2.jpg";
 import Header from "../../components/Header/Header";
-import { namespace } from "../../types/Data"; 
-import { ApiHelperGet } from "../../utils/ApiHelper";
+import { namespace } from "../../types/Data";
 import axios from "axios";
-
-
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [namespaces, setNamespaces] = useState<namespace[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Sample fallback images if API doesn't provide images
   const fallbackImages = [Doctorimg, demoimg, demo2];
@@ -26,16 +21,20 @@ const Dashboard = () => {
     const fetchNamespaces = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:5109/api/v1/namespace/getAll");
+        const response = await axios.get(
+          "http://localhost:5109/api/v1/namespace/getAll"
+        );
         console.log("Response from API:", response);
-        
+
         const data = await response.data;
         console.log("Fetched namespaces:", data);
-        
+
         setNamespaces(data.data);
       } catch (err) {
         console.error("Failed to fetch namespaces:", err);
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -46,7 +45,7 @@ const Dashboard = () => {
 
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text ">
-      <Header/>
+      <Header />
       <div className="flex justify-center mt-5 w-full">
         <div className="relative mt-6 w-full max-w-md">
           <input
@@ -67,11 +66,12 @@ const Dashboard = () => {
               imageUrl={item.meta.image}
               title={item.name}
               description={item.description}
-              onClick={() => navigate({ 
-                  to: "/registries/$namespace_id", 
-                  params: { namespace_id: item.namespace_id } 
-                })}
-
+              onClick={() =>
+                navigate({
+                  to: "/registries/$namespace_id",
+                  params: { namespace_id: item.namespace_id },
+                })
+              }
             />
           ))}
         </div>
