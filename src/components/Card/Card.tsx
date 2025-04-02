@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import Doctorimg from "../../assets/doctor.jpg";
 
 type cardProps = {
   title: string;
@@ -18,12 +19,12 @@ const Card = ({ title, description, imageUrl, onClick }: cardProps) => {
     <div
       className="rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out hover:cursor-pointer p-1"
       style={{ backgroundColor: bgColor }}
-      onClick={onClick} 
+      onClick={onClick}
     >
       {/* Card Image */}
       <div className="relative">
         <img
-          src={imageUrl}
+          src={Doctorimg}
           alt={title}
           className="w-full h-45 object-fit rounded-xl"
         />
