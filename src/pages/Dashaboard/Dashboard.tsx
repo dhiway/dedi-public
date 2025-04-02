@@ -1,100 +1,52 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import Card from "../../components/Card/Card";
 import Doctorimg from "../../assets/doctor.jpg";
 import demoimg from "../../assets/demo.jpg";
 import demo2 from "../../assets/demo2.jpg";
 import Header from "../../components/Header/Header";
+import { namespace } from "../../types/Data"; 
+import { ApiHelperGet } from "../../utils/ApiHelper";
+import axios from "axios";
 
 
-const dummyData = [
-  {
-    digest:
-      "0x4dfc74fec867c901fd0813023da48eec4ca5164aca14851c5a8a9267fdb82e4a",
-    name: "Doctors-List",
-    namespace_id:
-      "namespace:cord:tioE1vviJDP9j7bHq1SDkyeqcGMTuguPMdbYZZQRhk6iK3eJh",
-    description: "This is the namespace with list of doctors from 1947",
-    created_at: "2025-03-26T15:29:25.003Z",
-    updated_at: "2025-03-26T15:29:25.003Z",
-    version_count: 1,
-    version:
-      "0xc79330fd1cea89eda23293d211888bc63804e358b4d4f0e217c20a2753dcdff2",
-    registry_count: 67,
-    ttl: 600,
-    meta: {
-      image: Doctorimg,
-      displayName: "Doctors List",
-      description: "NPCI is nation organization registry",
-    },
-  },
-  {
-    digest:
-      "0x4dfc74fec867c901fd0813023da48eec4ca5164aca14851c5a8a9267fdb82e4a",
-    name: "NPCI-List",
-    namespace_id:
-      "namespace:cord:tioE1vviJDP9j7bHq1SDkyeqcGMTuguPMdbYZZQRhk6iK3eJh",
-    description: "This is the namespace with list of doctors from 1947",
-    created_at: "2025-03-26T15:29:25.003Z",
-    updated_at: "2025-03-26T15:29:25.003Z",
-    version_count: 1,
-    version:
-      "0xc79330fd1cea89eda23293d211888bc63804e358b4d4f0e217c20a2753dcdff2",
-    registry_count: 67,
-    ttl: 600,
-    meta: {
-      image: demoimg,
-      displayName: "NPCI",
-      description: "NPCI is nation organization registry",
-    },
-  },
-  {
-    digest:
-      "0x4dfc74fec867c901fd0813023da48eec4ca5164aca14851c5a8a9267fdb82e4a",
-    name: "NPCI-List",
-    namespace_id:
-      "namespace:cord:tioE1vviJDP9j7bHq1SDkyeqcGMTuguPMdbYZZQRhk6iK3eJh",
-    description: "This is the namespace with list of doctors from 1947",
-    created_at: "2025-03-26T15:29:25.003Z",
-    updated_at: "2025-03-26T15:29:25.003Z",
-    version_count: 1,
-    version:
-      "0xc79330fd1cea89eda23293d211888bc63804e358b4d4f0e217c20a2753dcdff2",
-    registry_count: 67,
-    ttl: 600,
-    meta: {
-      image: demo2,
-      displayName: "NPCI",
-      description: "NPCI is nation organization registry",
-    },
-  },
-  {
-    digest:
-      "0x4dfc74fec867c901fd0813023da48eec4ca5164aca14851c5a8a9267fdb82e4a",
-    name: "NPCI-List",
-    namespace_id:
-      "namespace:cord:tioE1vviJDP9j7bHq1SDkyeqcGMTuguPMdbYZZQRhk6iK3eJh",
-    description: "This is the namespace with list of doctors from 1947",
-    created_at: "2025-03-26T15:29:25.003Z",
-    updated_at: "2025-03-26T15:29:25.003Z",
-    version_count: 1,
-    version:
-      "0xc79330fd1cea89eda23293d211888bc63804e358b4d4f0e217c20a2753dcdff2",
-    registry_count: 67,
-    ttl: 600,
-    meta: {
-      image: demo2,
-      displayName: "NPCI",
-      description: "NPCI is nation organization registry",
-    },
-  },
-];
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [namespaces, setNamespaces] = useState<namespace[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Sample fallback images if API doesn't provide images
+  const fallbackImages = [Doctorimg, demoimg, demo2];
+
+  useEffect(() => {
+    const fetchNamespaces = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("http://localhost:5109/api/v1/namespace/getAll");
+        console.log("Response from API:", response);
+        
+        const data = await response.data;
+        console.log("Fetched namespaces:", data);
+        
+        setNamespaces(data.data);
+      } catch (err) {
+        console.error("Failed to fetch namespaces:", err);
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNamespaces();
+  }, []);
 
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text ">
-      <Header />
+      <Header/>
       <div className="flex justify-center mt-5 w-full">
         <div className="relative mt-6 w-full max-w-md">
           <input
@@ -109,11 +61,11 @@ const Dashboard = () => {
       </div>
       <div className="p-5 max-w-9/12 mt-5 mx-auto max-h-[60%] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {dummyData.map((item, index) => (
+          {namespaces.map((item, index) => (
             <Card
               key={index}
               imageUrl={item.meta.image}
-              title={item.meta.displayName}
+              title={item.name}
               description={item.description}
               onClick={() => navigate({ 
                   to: "/registries/$namespace_id", 
