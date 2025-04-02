@@ -6,6 +6,7 @@ type cardProps = {
   description: string;
   record_count: number;
   updated_at: string;
+  onClick?: () => void;
 };
 
 const colors = [
@@ -27,6 +28,7 @@ const CardRegistry = ({
   description,
   record_count,
   updated_at,
+  onClick,
 }: cardProps) => {
   const background = useMemo(getRandomGradient, []);
 
@@ -34,6 +36,7 @@ const CardRegistry = ({
     <div
       className={`flex flex-col justify-between overflow-hidden border-gray-200/60 hover:shadow-inner  hover:brightness-110 hover:scale-102 transition-transform duration-300 ease-in-out rounded-xl shadow-lg text-white hover:cursor-pointer`}
       style={{ background }}
+      onClick={onClick} 
     >
       <div className="p-2 bg-linear-to-b  bg-black/[0.04] from-black/[0.04] to-transparent to-20% text-xs">
         {timeAgo(updated_at)}

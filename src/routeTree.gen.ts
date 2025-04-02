@@ -17,7 +17,7 @@ import { Route as WatcherImport } from './routes/watcher'
 import { Route as RegistriesImport } from './routes/registries'
 import { Route as RecordsImport } from './routes/records'
 import { Route as RegistriesNamespaceidImport } from './routes/registries.$namespace_id'
-import { Route as RecordsNamespaceidRegistryidImport } from./routes/records.$namespace_id.$registry_idy_id'
+import { Route as RecordsNamespaceidRegistryidImport } from './routes/records.$namespace_id.$registry_id'
 
 // Create Virtual Routes
 

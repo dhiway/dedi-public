@@ -1,11 +1,12 @@
 import Header from "../../components/Header/Header";
 import CardRegistry from "../../components/Card/CardRegistry";
-import { useParams } from "@tanstack/react-router";
+import { useParams, useNavigate } from "@tanstack/react-router";
 import { use, useEffect, useState } from "react";
 import axios from "axios";
 
 const Registry = () => {
   const { namespace_id } = useParams({ from: '/registries/$namespace_id' });
+  const navigate = useNavigate();
   interface RegistryItem {
     registry_name: string;
     description: string;
@@ -48,6 +49,15 @@ const Registry = () => {
   }, [namespace_id]
 );
 
+const handleCardClick = (registry_name: string) => {
+  navigate({ 
+    to: '/records/$namespace_id/$registry_id',
+    params: { 
+      namespace_id: namespace_id as string,
+      registry_id: registry_name 
+    }
+  });
+};
 
 
   
@@ -77,6 +87,7 @@ const Registry = () => {
               description={item.description}
               record_count={item.record_count}
               updated_at={item.updated_at}
+              onClick={() => handleCardClick(item.registry_name)}
             />
           ))}
         </div>
