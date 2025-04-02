@@ -2,6 +2,7 @@ import DarkModeToggle from "../DarkMode/DarkModeToggle";
 
 interface HeaderProps {
   title?: string;
+  scrolled?: boolean;
   description: string;
   showBackButton?: boolean;
   onBackClick?: () => void;
@@ -10,6 +11,7 @@ interface HeaderProps {
 const Header = ({
   title = "NAMESPACE REGISTRY",
   description,
+  scrolled,
   showBackButton = false,
   onBackClick,
 }: HeaderProps) => {
@@ -21,7 +23,11 @@ const Header = ({
     }
   };
   return (
-    <div className="relative  w-full h-[30%] bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-center text-center px-4">
+    <div
+      className={` w-full bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-center text-center px-4  transition-all duration-500 ${
+        scrolled ? "h-0 opacity-0" : "h-[30%] opacity-100"
+      }`}
+    >
       <h1 className="text-white text-4xl font-bold uppercase">{title}</h1>
       <p className="text-gray-300 text-lg mt-3">{description}</p>
       <div className="absolute top-4 left-4">

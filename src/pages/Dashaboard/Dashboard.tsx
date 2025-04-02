@@ -7,10 +7,19 @@ import errorimg from "../../assets/error.svg";
 import Loader from "../../components/Loader/Loader";
 import { namespace } from "../../types/namspace";
 import ToastUtils from "../../components/Toast/toastUtils";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Dashboard = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const scrollTop = scrollContainerRef.current.scrollTop;
+      setScrolled(scrollTop > 50);
+    }
+  };
 
   const nameSpaceGet = async () => {
     const response = await axios.get(
@@ -31,8 +40,9 @@ const Dashboard = () => {
   }, [isError]);
 
   return (
-    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text ">
+    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
       <Header
+        scrolled={scrolled}
         description="A namespace registry serves as a central repository for storing and
         managing namespaces."
       />
@@ -55,9 +65,13 @@ const Dashboard = () => {
         </div>
       ) : null}
       {data ? (
-        <>
-          <div className="flex justify-center mt-5 w-full">
-            <div className="relative mt-6 w-full max-w-md">
+        <div
+          ref={scrollContainerRef}
+          className="p-5 max-w-9/12  mx-auto overflow-y-auto flex-1 w-full"
+          onScroll={handleScroll}
+        >
+          <div className="flex justify-center w-full">
+            <div className="relative mt-3 mb-5 w-full max-w-md">
               <input
                 type="text"
                 placeholder="Search Namespace"
@@ -68,25 +82,23 @@ const Dashboard = () => {
               </span>
             </div>
           </div>
-          <div className="p-5 max-w-9/12 mt-5 mx-auto max-h-[60%] overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {data.data.map((item: namespace, index: number) => (
-                <Card
-                  key={index}
-                  imageUrl={item.meta.image}
-                  title={item.name}
-                  description={item.description}
-                  onClick={() =>
-                    navigate({
-                      to: "/registries/$namespace_id",
-                      params: { namespace_id: item.namespace_id },
-                    })
-                  }
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {data.data.map((item: namespace, index: number) => (
+              <Card
+                key={index}
+                imageUrl={item.meta.image}
+                title={item.name}
+                description={item.description}
+                onClick={() =>
+                  navigate({
+                    to: "/registries/$namespace_id",
+                    params: { namespace_id: item.namespace_id },
+                  })
+                }
+              />
+            ))}
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );

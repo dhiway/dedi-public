@@ -148,6 +148,7 @@ const Records = () => {
       <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
         <Header
           title={`RECORDS: ${registry_id}`}
+          description={""}
           showBackButton={true}
           onBackClick={() => window.history.back()}
         />

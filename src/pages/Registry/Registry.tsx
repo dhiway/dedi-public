@@ -1,7 +1,7 @@
 import Header from "../../components/Header/Header";
 import CardRegistry from "../../components/Card/CardRegistry";
 import { useParams, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import errorimg from "../../assets/error.svg";
 import { registry } from "../../types/registry";
@@ -10,8 +10,17 @@ import ToastUtils from "../../components/Toast/toastUtils";
 import Loader from "../../components/Loader/Loader";
 
 const Registry = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
   const navigate = useNavigate();
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const scrollTop = scrollContainerRef.current.scrollTop;
+      setScrolled(scrollTop > 50);
+    }
+  };
 
   const registryDataGet = async () => {
     const response = await axios.get(
@@ -46,10 +55,11 @@ const Registry = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
+    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
       <Header
         title="REGISTRIES"
         description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
+        scrolled={scrolled}
         showBackButton={true}
         onBackClick={() => window.history.back()}
       />
@@ -72,9 +82,13 @@ const Registry = () => {
         </div>
       ) : null}
       {data ? (
-        <>
-          <div className="flex justify-center mt-5 w-full">
-            <div className="relative mt-6 w-full max-w-md">
+        <div
+          ref={scrollContainerRef}
+          className="p-5 max-w-9/12 mx-auto overflow-y-auto transition-all duration-500 flex-1 w-full"
+          onScroll={handleScroll}
+        >
+          <div className="flex justify-center w-full">
+            <div className="relative mt-2 mb-5 w-full max-w-md">
               <input
                 type="text"
                 placeholder="Search Registries"
@@ -85,21 +99,19 @@ const Registry = () => {
               </span>
             </div>
           </div>
-          <div className="p-5 max-w-9/12 mt-5 mx-auto max-h-[60%] overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {data.data.registries.map((item: registry, index: number) => (
-                <CardRegistry
-                  key={index}
-                  title={item.registry_name}
-                  description={item.description}
-                  record_count={item.record_count}
-                  updated_at={item.updated_at}
-                  onClick={() => handleCardClick(item.registry_name)}
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {data.data.registries.map((item: registry, index: number) => (
+              <CardRegistry
+                key={index}
+                title={item.registry_name}
+                description={item.description}
+                record_count={item.record_count}
+                updated_at={item.updated_at}
+                onClick={() => handleCardClick(item.registry_name)}
+              />
+            ))}
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );
