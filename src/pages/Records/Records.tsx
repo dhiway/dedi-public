@@ -12,10 +12,12 @@ import Header from "../../components/Header/Header";
 import axios from "axios";
 import Loader from "../../components/Loader/Loader";
 import { useQuery } from "@tanstack/react-query";
-import ToastUtils from "../../components/Toast/toastUtils";
+import ToastUtils from "../../components/Toast/ToastUtils";
 
 const Records = () => {
   const [recordData, SetRecordData] = useState<Record<string, any>[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const { namespace_id, registry_id } = useParams({
     from: "/records/$namespace_id/$registry_id",
   });
@@ -24,7 +26,7 @@ const Records = () => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_ENDPOINT
-      }/dedi/query/${namespace_id}/${registry_id}`
+      }/dedi/query/${namespace_id}/${registry_id}?page_number=${page}&page_size=${pageSize}`
     );
     return response.data;
   };
@@ -35,11 +37,11 @@ const Records = () => {
     data = { data: { records: [] } },
     error,
   } = useQuery({
-    queryKey: ["recordsDataGet", namespace_id, registry_id],
+    queryKey: ["recordsDataGet", namespace_id, registry_id, page, pageSize],
     queryFn: fetchRecordsData,
-    enabled: !!namespace_id && !!registry_id,
+    enabled: !!namespace_id,
   });
-  console.log("here data", data);
+
   useEffect(() => {
     if (isError) {
       ToastUtils.error(error.message);
@@ -86,7 +88,7 @@ const Records = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 10 } },
+    initialState: { pagination: { pageSize } },
   });
 
   if (!namespace_id || !registry_id) return null;
@@ -125,9 +127,17 @@ const Records = () => {
             Showing {data.data.records.length} records
           </div>
 
-          <div className="overflow-x-auto shadow-md rounded-lg">
-            <table className="min-w-full bg-secondary dark:bg-secondary rounded-lg">
-              <thead className="bg-accent text-text">
+          <div className="h-96  overflow-clip rounded-xl flex flex-col">
+            <table className="w-full table-fixed  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <caption className="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
+                {registry_id}
+                <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  Browse a list of Flowbite products designed to help you work
+                  and play, stay organized, get answers, keep in touch, grow
+                  your business, and more.
+                </p>
+              </caption>
+              <thead className="bg-accent sticky top-0 text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -144,64 +154,55 @@ const Records = () => {
                   </tr>
                 ))}
               </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-4">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
             </table>
+            <div className="flex-1 overflow-y-auto ">
+              <table className="w-full table-fixed">
+                <tbody className="w-full table-fixed">
+                  {table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className="py-3 px-4">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-2">
+            <div>
               <button
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
+                className="cursor-pointer"
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={page === 1}
               >
-                {"<<"}
+                Previous
               </button>
+              <span>Page {page}</span>
               <button
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                className="cursor-pointer"
+                onClick={() => setPage((prev) => prev + 1)}
+                disabled={data.data.records.length < pageSize}
               >
-                {"<"}
-              </button>
-              <button
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {">"}
-              </button>
-              <button
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                {">>"}
+                Next
               </button>
             </div>
-            <span>
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount() || 1}
-            </span>
             <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => table.setPageSize(Number(e.target.value))}
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
             >
-              {[10, 20, 30, 50, 100].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
+              {[20, 40, 100].map((size) => (
+                <option key={size} value={size}>
+                  Show {size}
                 </option>
               ))}
             </select>

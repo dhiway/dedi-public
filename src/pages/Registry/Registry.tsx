@@ -8,12 +8,14 @@ import { registry } from "../../types/registry";
 import { useQuery } from "@tanstack/react-query";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import Loader from "../../components/Loader/Loader";
+import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 
 const Registry = () => {
   const [scrolled, setScrolled] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -54,8 +56,41 @@ const Registry = () => {
     });
   };
 
+  const handleBackClick = () => {
+    window.history.back();
+  };
+
+
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
+       {/* Fixed navigation bar that appears when scrolled */}
+       <div 
+        className={`fixed top-0 left-0 right-0 z-50 bg-primary dark:bg-primary border-b border-gray-200 dark:border-gray-700 
+        flex items-center justify-between px-4 py-2 transition-all duration-300
+        ${scrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      >
+        <button
+          onClick={handleBackClick}
+          className="flex items-center justify-center p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          <span className="text-text dark:text-text">&larr;</span>
+        </button>
+        
+        <div className="relative max-w-md w-120 mx-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search Registries"
+            className="w-full p-2 pl-10 rounded-md bg-primary dark:bg-primary text-text dark:text-text border border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          />
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+        </div>
+        
+        <DarkModeToggle />
+      </div>
       <Header
         title="REGISTRIES"
         description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
