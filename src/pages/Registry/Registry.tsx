@@ -34,6 +34,8 @@ const Registry = () => {
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["registryDataGet"],
     queryFn: registryDataGet,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   useEffect(() => {
@@ -60,14 +62,13 @@ const Registry = () => {
     window.history.back();
   };
 
-
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
-       {/* Fixed navigation bar that appears when scrolled */}
-       <div 
+      {/* Fixed navigation bar that appears when scrolled */}
+      <div
         className={`fixed top-0 left-0 right-0 z-50 bg-primary dark:bg-primary border-b border-gray-200 dark:border-gray-700 
         flex items-center justify-between px-4 py-2 transition-all duration-300
-        ${scrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
         <button
           onClick={handleBackClick}
@@ -75,7 +76,7 @@ const Registry = () => {
         >
           <span className="text-text dark:text-text">&larr;</span>
         </button>
-        
+
         <div className="relative max-w-md w-120 mx-4">
           <input
             type="text"
@@ -88,7 +89,7 @@ const Registry = () => {
             🔍
           </span>
         </div>
-        
+
         <DarkModeToggle />
       </div>
       <Header
