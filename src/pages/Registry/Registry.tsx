@@ -79,12 +79,11 @@ const Registry = () => {
         </button>
 
         <div className="relative max-w-md w-120 mx-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Registries"
-          />
+        <SearchBar 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Registries"
+              />
         </div>
 
         <DarkModeToggle />
