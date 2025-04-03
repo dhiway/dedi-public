@@ -6,7 +6,7 @@ import axios from "axios";
 import errorimg from "../../assets/error.svg";
 import { registry } from "../../types/registry";
 import { useQuery } from "@tanstack/react-query";
-import ToastUtils from "../../components/Toast/toastUtils";
+import ToastUtils from "../../components/Toast/ToastUtils";
 import Loader from "../../components/Loader/Loader";
 
 const Registry = () => {

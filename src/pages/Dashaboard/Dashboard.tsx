@@ -6,13 +6,19 @@ import { useQuery } from "@tanstack/react-query";
 import errorimg from "../../assets/error.svg";
 import Loader from "../../components/Loader/Loader";
 import { namespace } from "../../types/namspace";
-import ToastUtils from "../../components/Toast/toastUtils";
+import ToastUtils from "../../components/Toast/ToastUtils";
 import { useEffect, useRef, useState } from "react";
 
 const Dashboard = () => {
   const [scrolled, setScrolled] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [namespaceData, setNamespaceData] = useState<{ data: namespace[] } | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
+  const [filteredNamespaces, setFilteredNamespaces] = useState<namespace[]>([]);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -34,10 +40,63 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    if (data) {
+      setNamespaceData(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (isError) {
       ToastUtils.error(error.message);
     }
   }, [isError]);
+
+   // Handle search input with debounce
+   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Set new timer for 3 seconds
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(value);
+    }, 3000);
+  };
+
+    // Filter namespaces based on debounced search query
+    useEffect(() => {
+      if (!namespaceData) return;
+      
+      if (debouncedSearchQuery.trim() === '') {
+        setFilteredNamespaces(namespaceData.data);
+      } else {
+        const filtered = namespaceData.data.filter(item => 
+          item.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
+          (item.description && item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
+        );
+        setFilteredNamespaces(filtered);
+      }
+    }, [debouncedSearchQuery, namespaceData]);
+
+      // Initialize filtered namespaces when data first loads
+  useEffect(() => {
+    if (namespaceData) {
+      setFilteredNamespaces(namespaceData.data);
+    }
+  }, [namespaceData]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
@@ -64,7 +123,7 @@ const Dashboard = () => {
           </p>
         </div>
       ) : null}
-      {data ? (
+      {namespaceData ? (
         <div
           ref={scrollContainerRef}
           className="p-5 max-w-9/12  mx-auto overflow-y-auto flex-1 w-full"
@@ -76,6 +135,8 @@ const Dashboard = () => {
                 type="text"
                 placeholder="Search Namespace"
                 className="w-full p-3 pl-10 rounded-md bg-primary dark:bg-primary text-text dark:text-text border border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 🔍
@@ -83,7 +144,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {data.data.map((item: namespace, index: number) => (
+            {filteredNamespaces.map((item: namespace, index: number) => (
               <Card
                 key={index}
                 imageUrl={item.meta.image}
