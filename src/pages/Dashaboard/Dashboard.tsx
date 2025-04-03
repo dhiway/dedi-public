@@ -8,6 +8,7 @@ import Loader from "../../components/Loader/Loader";
 import { namespace } from "../../types/namspace";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import { useEffect, useRef, useState } from "react";
+import SearchBar from "../../components/SearchBar/SearchBar";
 
 const Dashboard = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -131,16 +132,11 @@ const Dashboard = () => {
         >
           <div className="flex justify-center w-full">
             <div className="relative mt-3 mb-5 w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search Namespace"
-                className="w-full p-3 pl-10 rounded-md bg-primary dark:bg-primary text-text dark:text-text border border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            <SearchBar
                 value={searchQuery}
                 onChange={handleSearchChange}
+                placeholder="Search Namespace"
               />
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
