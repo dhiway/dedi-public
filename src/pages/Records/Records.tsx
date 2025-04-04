@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
 import {
   useReactTable,
@@ -16,11 +16,20 @@ import ToastUtils from "../../components/Toast/ToastUtils";
 
 const Records = () => {
   const [recordData, SetRecordData] = useState<Record<string, any>[]>([]);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(30);
   const { namespace_id, registry_id } = useParams({
     from: "/records/$namespace_id/$registry_id",
   });
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const scrollTop = scrollContainerRef.current.scrollTop;
+      setScrolled(scrollTop > 50);
+    }
+  };
 
   const fetchRecordsData = async () => {
     const response = await axios.get(
@@ -86,6 +95,7 @@ const Records = () => {
   const table = useReactTable({
     data: recordData || [],
     columns,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: { pagination: { pageSize } },
@@ -97,6 +107,7 @@ const Records = () => {
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
       <Header
         title={`RECORDS: ${registry_id}`}
+        scrolled={scrolled}
         description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
         showBackButton={true}
         onBackClick={() => window.history.back()}
@@ -122,20 +133,18 @@ const Records = () => {
       )}
 
       {!isPending && !isError && data.data.records.length > 0 && (
-        <div className="container mx-auto px-4 py-6">
-          <div className="mb-4 text-sm text-gray-500">
-            Showing {data.data.records.length} records
-          </div>
-
-          <div className="h-96  overflow-clip rounded-xl flex flex-col">
-            <table className="w-full table-fixed  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <caption className="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
+        <>
+          <div
+            className={`rounded-xl flex flex-col max-w-9/12 mx-auto pt-5 pb-5 ${
+              scrolled ? "max-h-screen" : "max-h-130 overflow-clip"
+            }`}
+          >
+            <div className="mb-4 text-sm text-gray-500">
+              Showing {data.data.records.length} records
+            </div>
+            <table className="w-full rounded-xl table-fixed  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <caption className="p-5  rounded-t-xl text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
                 {registry_id}
-                <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  Browse a list of Flowbite products designed to help you work
-                  and play, stay organized, get answers, keep in touch, grow
-                  your business, and more.
-                </p>
               </caption>
               <thead className="bg-accent sticky top-0 text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -155,7 +164,11 @@ const Records = () => {
                 ))}
               </thead>
             </table>
-            <div className="flex-1 overflow-y-auto ">
+            <div
+              ref={scrollContainerRef}
+              className="flex-1 overflow-y-auto rounded-b-xl pb-5"
+              onScroll={handleScroll}
+            >
               <table className="w-full table-fixed">
                 <tbody className="w-full table-fixed">
                   {table.getRowModel().rows.map((row) => (
@@ -176,38 +189,37 @@ const Records = () => {
                 </tbody>
               </table>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              <button
-                className="cursor-pointer"
-                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                disabled={page === 1}
+            <div className="flex items-center justify-between mt-4">
+              <div>
+                <button
+                  className="cursor-pointer"
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {page}</span>
+                <button
+                  className="cursor-pointer"
+                  onClick={() => setPage((prev) => prev + 1)}
+                  disabled={data.data.records.length < pageSize}
+                >
+                  Next
+                </button>
+              </div>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
               >
-                Previous
-              </button>
-              <span>Page {page}</span>
-              <button
-                className="cursor-pointer"
-                onClick={() => setPage((prev) => prev + 1)}
-                disabled={data.data.records.length < pageSize}
-              >
-                Next
-              </button>
+                {[30, 40, 100].map((size) => (
+                  <option key={size} value={size}>
+                    Show {size}
+                  </option>
+                ))}
+              </select>
             </div>
-            <select
-              value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
-            >
-              {[20, 40, 100].map((size) => (
-                <option key={size} value={size}>
-                  Show {size}
-                </option>
-              ))}
-            </select>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
