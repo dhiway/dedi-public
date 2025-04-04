@@ -79,7 +79,7 @@ const Records = () => {
     });
 
     return Array.from(allKeys).map((key: string) =>
-      columnHelper.accessor((row) => row[key], {
+      columnHelper.accessor((row: unknown) => (row as Record<string, any>)[key], {
         id: key,
         header: key.charAt(0).toUpperCase() + key.slice(1),
         cell: (info) => {
@@ -190,21 +190,21 @@ const Records = () => {
               </table>
             </div>
             <div className="flex items-center justify-between mt-4">
-              <div>
-                <button
-                  className="cursor-pointer"
+            <div className="flex items-center gap-3">
+               <button
+                  className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
                 >
-                  Previous
+                  &lt;
                 </button>
                 <span>Page {page}</span>
                 <button
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setPage((prev) => prev + 1)}
                   disabled={data.data.records.length < pageSize}
                 >
-                  Next
+                  &gt;
                 </button>
               </div>
               <select
