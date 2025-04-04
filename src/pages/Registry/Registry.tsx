@@ -17,6 +17,9 @@ const Registry = () => {
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
+  const [filteredRegistries, setFilteredRegistries] = useState<registry[]>([]);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -38,6 +41,53 @@ const Registry = () => {
     staleTime: 0,
     gcTime: 0,
   });
+
+    // Handle search input with debounce
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchQuery(value);
+      
+      // Clear previous timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      
+      // Set new timer for 3 seconds
+      debounceTimerRef.current = setTimeout(() => {
+        setDebouncedSearchQuery(value);
+      }, 3000);
+    };
+  
+    // Filter registries based on debounced search query
+    useEffect(() => {
+      if (!data) return;
+      
+      if (debouncedSearchQuery.trim() === '') {
+        setFilteredRegistries(data.data.registries);
+      } else {
+        const filtered = data.data.registries.filter((item: registry) => 
+          item.registry_name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
+          (item.description && item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
+        );
+        setFilteredRegistries(filtered);
+      }
+    }, [debouncedSearchQuery, data]);
+  
+    // Initialize filtered registries when data first loads
+    useEffect(() => {
+      if (data) {
+        setFilteredRegistries(data.data.registries);
+      }
+    }, [data]);
+  
+    // Clean up timer on unmount
+    useEffect(() => {
+      return () => {
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current);
+        }
+      };
+    }, []);
 
   useEffect(() => {
     if (isError) {
@@ -81,7 +131,7 @@ const Registry = () => {
         <div className="relative max-w-md w-120 mx-4">
         <SearchBar 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 placeholder="Search Registries"
               />
         </div>
@@ -123,13 +173,13 @@ const Registry = () => {
             <div className="relative mt-2 mb-5 w-full max-w-md">
             <SearchBar 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 placeholder="Search Registries"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data.data.registries.map((item: registry, index: number) => (
+            {filteredRegistries.map((item: registry, index: number) => (
               <CardRegistry
                 key={index}
                 title={item.registry_name}

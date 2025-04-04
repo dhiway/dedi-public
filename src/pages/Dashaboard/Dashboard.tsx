@@ -9,6 +9,7 @@ import { namespace } from "../../types/namspace";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import { useEffect, useRef, useState } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
+import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 
 const Dashboard = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -101,6 +102,28 @@ const Dashboard = () => {
 
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
+      {/* Fixed navigation bar that appears when scrolled */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 bg-primary dark:bg-primary border-b border-gray-200 dark:border-gray-700 
+        flex items-center justify-between px-4 py-2 transition-all duration-300
+        ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      >
+        <div className="flex-1">
+          {/* Empty div for alignment purposes */}
+        </div>
+        
+        <div className="relative max-w-md w-60 mx-4">
+          <SearchBar 
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search Namespace"
+          />
+        </div>
+        
+        <div className="flex-1 flex justify-end">
+          <DarkModeToggle />
+        </div>
+      </div>
       <Header
         scrolled={scrolled}
         description="A namespace registry serves as a central repository for storing and

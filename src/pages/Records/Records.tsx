@@ -106,7 +106,7 @@ const Records = () => {
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
       <Header
-        title={`RECORDS: ${registry_id}`}
+        title={`RECORDS`}
         scrolled={scrolled}
         description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
         showBackButton={true}
