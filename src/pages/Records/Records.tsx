@@ -36,7 +36,7 @@ const Records = () => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_ENDPOINT
-      }/dedi/query/${namespace_id}/${registry_id}?page_number=${page}&page_size=${pageSize}`
+      }/dedi/query/${namespace_id}/${registry_id}?page=${page}&page_size=${pageSize}`
     );
     return response.data;
   };

@@ -186,7 +186,7 @@ const Dashboard = () => {
               namespaceData.map((item: namespace, index: number) => (
                 <Card
                   key={index}
-                  imageUrl={item.meta.logoimage}
+                  imageUrl={item.meta?.logoimage ? item.meta.logoimage : ""}
                   title={item.name}
                   description={item.description}
                   onClick={() =>

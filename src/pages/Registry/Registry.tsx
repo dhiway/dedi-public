@@ -34,7 +34,7 @@ const Registry = () => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_ENDPOINT
-      }/dedi/query/${namespace_id}?name_string=${debouncedSearchQuery}`
+      }/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
     );
     return response.data;
   };
