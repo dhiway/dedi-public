@@ -4,7 +4,7 @@ import Doctorimg from "../../assets/doctor.jpg";
 type cardProps = {
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl: string | undefined;
   onClick?: () => void;
 };
 
@@ -24,7 +24,7 @@ const Card = ({ title, description, imageUrl, onClick }: cardProps) => {
       {/* Card Image */}
       <div className="relative">
         <img
-          src={imageUrl}
+          src={imageUrl ? imageUrl : Doctorimg}
           alt={title}
           className="w-full h-45 object-fit rounded-xl"
         />

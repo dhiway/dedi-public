@@ -2,8 +2,9 @@ import Header from "../../components/Header/Header";
 import CardRegistry from "../../components/Card/CardRegistry";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import errorimg from "../../assets/error.svg";
+import norecords from "../../assets/norecord.svg";
 import { registry } from "../../types/registry";
 import { useQuery } from "@tanstack/react-query";
 import ToastUtils from "../../components/Toast/ToastUtils";
@@ -20,6 +21,7 @@ const Registry = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
   const [filteredRegistries, setFilteredRegistries] = useState<registry[]>([]);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [nomatchFound, setNoMatchFound] = useState(false);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -30,68 +32,65 @@ const Registry = () => {
 
   const registryDataGet = async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_ENDPOINT}/dedi/query/${namespace_id}`
+      `${
+        import.meta.env.VITE_API_ENDPOINT
+      }/dedi/query/${namespace_id}?name_string=${debouncedSearchQuery}`
     );
     return response.data;
   };
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["registryDataGet"],
+    queryKey: ["registryDataGet", debouncedSearchQuery],
     queryFn: registryDataGet,
     staleTime: 0,
     gcTime: 0,
   });
 
-    // Handle search input with debounce
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setSearchQuery(value);
-      
-      // Clear previous timer
+  // Handle search input with debounce
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set new timer for 3 seconds
+    debounceTimerRef.current = setTimeout(() => {
+      if (value.length < 3 && value.length > 1) {
+        ToastUtils.error("Please enter at least 3 characters for search");
+      } else {
+        setDebouncedSearchQuery(value);
+      }
+    }, 1500);
+  };
+
+  // Initialize filtered registries when data first loads
+  useEffect(() => {
+    setNoMatchFound(false);
+    if (data) {
+      setFilteredRegistries(data.data.registries);
+    }
+  }, [data]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
-      
-      // Set new timer for 3 seconds
-      debounceTimerRef.current = setTimeout(() => {
-        setDebouncedSearchQuery(value);
-      }, 3000);
     };
-  
-    // Filter registries based on debounced search query
-    useEffect(() => {
-      if (!data) return;
-      
-      if (debouncedSearchQuery.trim() === '') {
-        setFilteredRegistries(data.data.registries);
-      } else {
-        const filtered = data.data.registries.filter((item: registry) => 
-          item.registry_name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
-          (item.description && item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
-        );
-        setFilteredRegistries(filtered);
-      }
-    }, [debouncedSearchQuery, data]);
-  
-    // Initialize filtered registries when data first loads
-    useEffect(() => {
-      if (data) {
-        setFilteredRegistries(data.data.registries);
-      }
-    }, [data]);
-  
-    // Clean up timer on unmount
-    useEffect(() => {
-      return () => {
-        if (debounceTimerRef.current) {
-          clearTimeout(debounceTimerRef.current);
-        }
-      };
-    }, []);
+  }, []);
 
   useEffect(() => {
     if (isError) {
-      ToastUtils.error(error.message);
+      const axiosError = error as AxiosError;
+      console.log("here error", error);
+      if (axiosError.status === 404) {
+        setNoMatchFound(true);
+      } else {
+        ToastUtils.error(axiosError.message);
+      }
     }
   }, [isError]);
 
@@ -129,11 +128,11 @@ const Registry = () => {
         </button>
 
         <div className="relative max-w-md w-120 mx-4">
-        <SearchBar 
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search Registries"
-              />
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search Registries"
+          />
         </div>
 
         <DarkModeToggle />
@@ -163,7 +162,7 @@ const Registry = () => {
           </p>
         </div>
       ) : null}
-      {data ? (
+      {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
           className="p-5 max-w-9/12 mx-auto overflow-y-auto transition-all duration-500 flex-1 w-full"
@@ -171,13 +170,39 @@ const Registry = () => {
         >
           <div className="flex justify-center w-full">
             <div className="relative mt-2 mb-5 w-full max-w-md">
-            <SearchBar 
+              <SearchBar
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Search Registries"
               />
             </div>
           </div>
+          {nomatchFound ? (
+            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+              <img
+                src={norecords}
+                alt={"here error page"}
+                className="w-full h-45 object-fit rounded-xl"
+              />
+              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+                No match found !!
+              </p>
+            </div>
+          ) : null}
+
+          {filteredRegistries.length === 0 ? (
+            <div className="p-5  overflow-y-auto justify-center flex flex-col text-center">
+              <img
+                src={norecords}
+                alt={"here error page"}
+                className="w-full h-45 object-fit rounded-xl"
+              />
+              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+                No registries found !!
+              </p>
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredRegistries.map((item: registry, index: number) => (
               <CardRegistry

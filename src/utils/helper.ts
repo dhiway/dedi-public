@@ -13,3 +13,12 @@ export function timeAgo(updatedAt: string): string {
         return `${daysAgo} days ago`;
     }
 }
+
+export function normalization(inputString:string){
+    const cleanString = inputString.replace(/[_-]/g, ' ');
+    const stringList = cleanString.split(" ");
+    const normalizedList = stringList.map((key)=> {
+            return key.charAt(0).toUpperCase() + key.slice(1);
+        });
+    return normalizedList.toString().replace(/,/g," ");
+}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
+import norecords from "../../assets/norecord.svg";
 import {
   useReactTable,
   getCoreRowModel,
@@ -79,16 +80,19 @@ const Records = () => {
     });
 
     return Array.from(allKeys).map((key: string) =>
-      columnHelper.accessor((row: unknown) => (row as Record<string, any>)[key], {
-        id: key,
-        header: key.charAt(0).toUpperCase() + key.slice(1),
-        cell: (info) => {
-          const value = info.getValue();
-          if (value === null || value === undefined) return "-";
-          if (typeof value === "object") return JSON.stringify(value);
-          return String(value);
-        },
-      })
+      columnHelper.accessor(
+        (row: unknown) => (row as Record<string, any>)[key],
+        {
+          id: key,
+          header: key.charAt(0).toUpperCase() + key.slice(1),
+          cell: (info) => {
+            const value = info.getValue();
+            if (value === null || value === undefined) return "-";
+            if (typeof value === "object") return JSON.stringify(value);
+            return String(value);
+          },
+        }
+      )
     );
   }, [recordData]);
 
@@ -127,8 +131,15 @@ const Records = () => {
       )}
 
       {!isPending && !isError && data.data.records.length === 0 && (
-        <div className="p-5 text-center text-xl font-bold">
-          No records found.
+        <div className="p-5  overflow-y-auto justify-center flex flex-col text-center">
+          <img
+            src={norecords}
+            alt={"here error page"}
+            className="w-full h-45 object-fit rounded-xl"
+          />
+          <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+            No records found !!
+          </p>
         </div>
       )}
 
@@ -190,8 +201,8 @@ const Records = () => {
               </table>
             </div>
             <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-3">
-               <button
+              <div className="flex items-center gap-3">
+                <button
                   className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
