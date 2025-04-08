@@ -31,7 +31,7 @@ const Dashboard = () => {
 
   const nameSpaceGet = async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_META_API_ENDPOINT}/api/v1/namespace/getAll`
+      `${import.meta.env.VITE_API_ENDPOINT}/dedi/internal/get-all-namepace`
     );
     return response.data;
   };
@@ -166,7 +166,7 @@ const Dashboard = () => {
             {filteredNamespaces.map((item: namespace, index: number) => (
               <Card
                 key={index}
-                imageUrl={item.meta.image}
+                imageUrl={item.meta.logoimage}
                 title={item.name}
                 description={item.description}
                 onClick={() =>

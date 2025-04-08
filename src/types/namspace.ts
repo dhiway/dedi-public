@@ -10,8 +10,7 @@ export interface namespace {
     registry_count: number;
     ttl: number;
     meta: {
-      image: string;
-      displayName: string;
-      description?: string;
+      logoimage?: string;
+      bannerimage?: string;
     };
   }

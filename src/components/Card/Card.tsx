@@ -24,7 +24,7 @@ const Card = ({ title, description, imageUrl, onClick }: cardProps) => {
       {/* Card Image */}
       <div className="relative">
         <img
-          src={Doctorimg}
+          src={imageUrl}
           alt={title}
           className="w-full h-45 object-fit rounded-xl"
         />
