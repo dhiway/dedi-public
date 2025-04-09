@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import Doctorimg from "../../assets/doctor.jpg";
+import Doctorimg from "../../assets/dummy.jpg";
 
 type cardProps = {
   title: string;
