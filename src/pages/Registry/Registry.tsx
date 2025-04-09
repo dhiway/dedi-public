@@ -85,7 +85,6 @@ const Registry = () => {
   useEffect(() => {
     if (isError) {
       const axiosError = error as AxiosError;
-      console.log("here error", error);
       if (axiosError.status === 404) {
         setNoMatchFound(true);
       } else {
@@ -165,7 +164,7 @@ const Registry = () => {
       {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
-          className="p-5 max-w-9/12 mx-auto overflow-y-auto transition-all duration-500 flex-1 w-full"
+          className="p-5 max-w-9/12 mx-auto overflow-y-auto transition-all duration-500 flex-1 w-full no-scrollbar"
           onScroll={handleScroll}
         >
           <div className="flex justify-center w-full">

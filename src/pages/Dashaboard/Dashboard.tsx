@@ -54,7 +54,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (isError) {
       const axiosError = error as AxiosError;
-      console.log("here error", error);
       if (axiosError.status === 404) {
         setNoMatchFound(true);
       } else {
@@ -151,7 +150,7 @@ const Dashboard = () => {
       {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
-          className={`p-5 max-w-9/12 mx-auto overflow-y-auto flex-1 w-full ${
+          className={`p-5 max-w-9/12 mx-auto overflow-y-auto flex-1 w-full no-scrollbar ${
             scrolled ? "mt-20" : ""
           }`}
           onScroll={handleScroll}

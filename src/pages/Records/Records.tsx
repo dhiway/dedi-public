@@ -59,9 +59,7 @@ const Records = () => {
   }, [isError, error]);
 
   useEffect(() => {
-    console.log("here data going", data);
     if (data.data.records.length > 0) {
-      console.log("here data going inside", data);
       const detailsArray = data.data.records.map(
         (record: { details?: Record<string, any> }) => record.details || {}
       );

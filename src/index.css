@@ -8,6 +8,7 @@
   --color-primary: #F0F0F0;
   --color-text: #606060;
   --color-secondary:#b180d7;
+   --color-input:#23262b;
 }
 
 @layer base {
@@ -21,11 +22,13 @@
   --color-primary: #F0F0F0;
   --color-text: #606060;
   --color-secondary:#007ACC;
+   --color-input:#c6c2c2;
 }
 
 /* Dark mode */
 .dark {
-  --color-primary: #0d1117;
+  --color-primary: rgb(17 24 39);
   --color-text: #CCCCCC;
   --color-secondary:#007ACC;
+  --color-input:#23262b;
 }
