@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { normalization, timeAgo } from "../../utils/helper";
 
-type cardProps = {
+type CardProps = {
   title: string;
   description: string;
   record_count: number;
@@ -18,8 +18,15 @@ const colors = [
   ["#009966", "#e17100"],
 ];
 
-const getRandomGradient = () => {
-  const [color1, color2] = colors[Math.floor(Math.random() * colors.length)];
+// Function to get a consistent gradient based on the title
+const getStaticGradient = (title: string) => {
+  // Use a hash of the title to pick a consistent color from the colors array
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) {
+    hash = title.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  const [color1, color2] = colors[index];
   return `linear-gradient(to bottom right, ${color1}, ${color2})`;
 };
 
@@ -29,23 +36,24 @@ const CardRegistry = ({
   record_count,
   updated_at,
   onClick,
-}: cardProps) => {
-  const background = useMemo(getRandomGradient, []);
+}: CardProps) => {
+  // Use useMemo to compute the static gradient only when the title changes
+  const background = useMemo(() => getStaticGradient(title), [title]);
 
   return (
     <div
-      className={`flex flex-col justify-between overflow-hidden border-gray-200/60 hover:shadow-inner  hover:brightness-110 hover:scale-102 transition-transform duration-300 ease-in-out rounded-xl shadow-lg text-white hover:cursor-pointer`}
+      className={`flex flex-col justify-between overflow-hidden border-gray-200/60 hover:shadow-inner hover:brightness-110 hover:scale-102 transition-transform duration-300 ease-in-out rounded-xl shadow-lg text-white hover:cursor-pointer`}
       style={{ background }}
       onClick={onClick}
     >
-      <div className="p-2 bg-linear-to-b  bg-black/[0.04] from-black/[0.04] to-transparent to-20% text-xs">
+      <div className="p-2 bg-linear-to-b bg-black/[0.04] from-black/[0.04] to-transparent to-20% text-xs">
         {timeAgo(updated_at)}
       </div>
       <div className="p-3">
         <h3 className="text-lg font-bold ">{normalization(title)}</h3>
         <p className="text-sm mt-1 opacity-90">{description}</p>
       </div>
-      <div className="p-2 bg-linear-to-b  bg-black/[0.04] from-black/[0.04] to-transparent to-20%">
+      <div className="p-2 bg-linear-to-b bg-black/[0.04] from-black/[0.04] to-transparent to-20%">
         <p className="text-sm mt-1 opacity-90">Record Count: {record_count}</p>
       </div>
     </div>
