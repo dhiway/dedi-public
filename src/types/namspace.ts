@@ -9,6 +9,7 @@ export interface namespace {
     version: string;
     registry_count: number;
     ttl: number;
+    record_count?: number;
     meta: {
       logoimage?: string;
       bannerimage?: string;

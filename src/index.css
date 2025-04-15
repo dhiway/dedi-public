@@ -7,7 +7,7 @@
    --font-sans: "Source Sans 3", sans-serif;
   --color-primary: #F0F0F0;
   --color-text: #606060;
-  --color-secondary:#b180d7;
+  --color-secondary:#007ACC;
    --color-input:#23262b;
 }
 
@@ -22,7 +22,16 @@
   --color-primary: #F0F0F0;
   --color-text: #606060;
   --color-secondary:#007ACC;
-   --color-input:#c6c2c2;
+  --color-input:#c6c2c2;
+  
+  /* Card text styling variables */
+  --card-title-color: #1A202C;
+  --card-title-hover: #007ACC;
+  --card-description-color: #718096;
+  --card-stats-color: #A0AEC0;
+  --card-stats-number-color: #2D3748;
+  --avatar-bg: #007ACC;
+  --avatar-text: #FFFFFF;
 }
 
 /* Dark mode */
@@ -31,4 +40,13 @@
   --color-text: #CCCCCC;
   --color-secondary:#007ACC;
   --color-input:#23262b;
+  
+  /* Card text styling variables */
+  --card-title-color: #F7FAFC;
+  --card-title-hover: #4299E1;
+  --card-description-color: #CBD5E0;
+  --card-stats-color: #A0AEC0;
+  --card-stats-number-color: #E2E8F0;
+  --avatar-bg: #007ACC;
+  --avatar-text: #FFFFFF;
 }

@@ -150,7 +150,7 @@ const Dashboard = () => {
       {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
-          className={`p-5 max-w-9/12 mx-auto overflow-y-auto flex-1 w-full no-scrollbar ${
+          className={`container mx-auto px-4 md:px-6 pb-8 overflow-y-auto flex-1 w-full no-scrollbar ${
             scrolled ? "mt-20" : ""
           }`}
           onScroll={handleScroll}
@@ -180,20 +180,16 @@ const Dashboard = () => {
               </p>
             </div>
           ) : null}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6 auto-rows-fr">
             {data &&
               namespaceData.map((item: namespace, index: number) => (
                 <Card
                   key={index}
-                  imageUrl={item.meta?.logoimage ? item.meta.logoimage : ""}
+                  namespace_id={item.namespace_id}
                   title={item.name}
                   description={item.description}
-                  onClick={() =>
-                    navigate({
-                      to: "/registries/$namespace_id",
-                      params: { namespace_id: item.namespace_id },
-                    })
-                  }
+                  imageUrl={item.meta?.logoimage}
+                  recordCount={item.record_count || item.registry_count}
                 />
               ))}
           </div>
