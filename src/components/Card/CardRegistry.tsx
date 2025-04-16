@@ -1,11 +1,6 @@
 import { useMemo } from "react";
 import { normalization } from "../../utils/helper";
-
-// Define color associations for different types of cards
-type ColorType = {
-  dotColorClass: string;
-  colorScheme: 'orange' | 'violet' | 'red' | 'lime' | 'fuchsia' | 'blue' | 'cyan' | 'green' | 'yellow' | 'indigo';
-};
+import { getCardColor, getHoverGradient, getHoverBorder, ColorType } from "../../utils/cardStyles";
 
 type CardProps = {
   title: string;
@@ -21,112 +16,13 @@ type CardRegistryGroupProps = {
   onCardClick?: (card: CardProps) => void;
 };
 
-// Map card types to their corresponding color classes
-const colorMap: Record<string, ColorType> = {
-  transformers: {
-    dotColorClass: "bg-orange-500",
-    colorScheme: "orange"
-  },
-  diffusers: {
-    dotColorClass: "bg-violet-500",
-    colorScheme: "violet"
-  },
-  datasets: {
-    dotColorClass: "bg-red-500",
-    colorScheme: "red"
-  },
-  tokenizers: {
-    dotColorClass: "bg-lime-500",
-    colorScheme: "lime"
-  },
-  evaluate: {
-    dotColorClass: "bg-fuchsia-500",
-    colorScheme: "fuchsia"
-  },
-  timm: {
-    dotColorClass: "bg-blue-500",
-    colorScheme: "blue"
-  },
-  sentence: {
-    dotColorClass: "bg-cyan-500",
-    colorScheme: "cyan"
-  },
-  inference: {
-    dotColorClass: "bg-green-500",
-    colorScheme: "green"
-  },
-  peft: {
-    dotColorClass: "bg-yellow-500",
-    colorScheme: "yellow"
-  },
-  accelerate: {
-    dotColorClass: "bg-indigo-500",
-    colorScheme: "indigo"
-  },
-  default: {
-    dotColorClass: "bg-blue-500",
-    colorScheme: "blue"
-  }
-};
+// Map card types to their corresponding color classes is now in color.json
 
-// Function to determine the color based on title
-const getCardColor = (title: string): ColorType => {
-  const lowerTitle = title.toLowerCase();
-  
-  // Use a hash function to ensure consistent color selection
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash);
-  }
+// Function to determine the color based on title is now in cardStyles.ts
 
-  // Try to match by keyword first
-  for (const [keyword, color] of Object.entries(colorMap)) {
-    if (lowerTitle.includes(keyword)) {
-      return color;
-    }
-  }
-  
-  // If no keyword matches, use hash to pick a consistent color
-  const colorKeys = Object.keys(colorMap).filter(key => key !== 'default');
-  const index = Math.abs(hash) % colorKeys.length;
-  return colorMap[colorKeys[index]] || colorMap.default;
-};
+// Helper function to get the appropriate gradient class based on color scheme is now in cardStyles.ts
 
-// Helper function to get the appropriate gradient class based on color scheme
-function getHoverGradient(colorScheme: string): string {
-  const lightModeGradients: Record<string, string> = {
-    orange: 'from-orange-100 to-orange-50/60 dark:from-orange-900/30 dark:to-orange-950/20',
-    violet: 'from-violet-100 to-violet-50/60 dark:from-violet-900/30 dark:to-violet-950/20',
-    red: 'from-red-100 to-red-50/60 dark:from-red-900/30 dark:to-red-950/20',
-    lime: 'from-lime-100 to-lime-50/60 dark:from-lime-900/30 dark:to-lime-950/20',
-    fuchsia: 'from-fuchsia-100 to-fuchsia-50/60 dark:from-fuchsia-900/30 dark:to-fuchsia-950/20',
-    blue: 'from-blue-100 to-blue-50/60 dark:from-blue-900/30 dark:to-blue-950/20',
-    cyan: 'from-cyan-100 to-cyan-50/60 dark:from-cyan-900/30 dark:to-cyan-950/20',
-    green: 'from-green-100 to-green-50/60 dark:from-green-900/30 dark:to-green-950/20',
-    yellow: 'from-yellow-100 to-yellow-50/60 dark:from-yellow-900/30 dark:to-yellow-950/20',
-    indigo: 'from-indigo-100 to-indigo-50/60 dark:from-indigo-900/30 dark:to-indigo-950/20'
-  };
-
-  return lightModeGradients[colorScheme] || lightModeGradients.blue;
-}
-
-// Helper function to get the hover border class based on color scheme
-function getHoverBorder(colorScheme: string): string {
-  const borderClasses: Record<string, string> = {
-    orange: 'group-hover:border-orange-300/50 dark:group-hover:border-orange-700/50',
-    violet: 'group-hover:border-violet-300/50 dark:group-hover:border-violet-700/50',
-    red: 'group-hover:border-red-300/50 dark:group-hover:border-red-700/50',
-    lime: 'group-hover:border-lime-300/50 dark:group-hover:border-lime-700/50',
-    fuchsia: 'group-hover:border-fuchsia-300/50 dark:group-hover:border-fuchsia-700/50',
-    blue: 'group-hover:border-blue-300/50 dark:group-hover:border-blue-700/50',
-    cyan: 'group-hover:border-cyan-300/50 dark:group-hover:border-cyan-700/50',
-    green: 'group-hover:border-green-300/50 dark:group-hover:border-green-700/50',
-    yellow: 'group-hover:border-yellow-300/50 dark:group-hover:border-yellow-700/50',
-    indigo: 'group-hover:border-indigo-300/50 dark:group-hover:border-indigo-700/50'
-  };
-
-  return borderClasses[colorScheme] || borderClasses.blue;
-}
+// Helper function to get the hover border class based on color scheme is now in cardStyles.ts
 
 const CardRegistry = ({
   title,
