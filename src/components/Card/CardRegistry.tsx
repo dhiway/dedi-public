@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { normalization, timeAgo } from "../../utils/helper";
+import { normalization } from "../../utils/helper";
+import { getCardColor, getHoverGradient, getHoverBorder, ColorType } from "../../utils/cardStyles";
 
 type CardProps = {
   title: string;
@@ -9,26 +10,19 @@ type CardProps = {
   onClick?: () => void;
 };
 
-const colors = [
-  ["#4f39f6", "#ff758c"],
-  ["#4a5565", "#4a5565"],
-  ["#e17100", "#e7000b"],
-  ["#4f39f6", "#4a5565"],
-  ["#e60076", "#4f39f6"],
-  ["#009966", "#e17100"],
-];
-
-// Function to get a consistent gradient based on the title
-const getStaticGradient = (title: string) => {
-  // Use a hash of the title to pick a consistent color from the colors array
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % colors.length;
-  const [color1, color2] = colors[index];
-  return `linear-gradient(to bottom right, ${color1}, ${color2})`;
+type CardRegistryGroupProps = {
+  title: string;
+  cards: CardProps[];
+  onCardClick?: (card: CardProps) => void;
 };
+
+// Map card types to their corresponding color classes is now in color.json
+
+// Function to determine the color based on title is now in cardStyles.ts
+
+// Helper function to get the appropriate gradient class based on color scheme is now in cardStyles.ts
+
+// Helper function to get the hover border class based on color scheme is now in cardStyles.ts
 
 const CardRegistry = ({
   title,
@@ -37,24 +31,66 @@ const CardRegistry = ({
   updated_at,
   onClick,
 }: CardProps) => {
-  // Use useMemo to compute the static gradient only when the title changes
-  const background = useMemo(() => getStaticGradient(title), [title]);
+  // Use useMemo to compute the color only when the title changes
+  const colorStyle = useMemo(() => getCardColor(title), [title]);
+  const hoverGradient = useMemo(() => getHoverGradient(colorStyle.colorScheme), [colorStyle]);
+  const hoverBorder = useMemo(() => getHoverBorder(colorStyle.colorScheme), [colorStyle]);
 
   return (
-    <div
-      className={`flex flex-col justify-between overflow-hidden border-gray-200/60 hover:shadow-inner hover:brightness-110 hover:scale-102 transition-transform duration-300 ease-in-out rounded-xl shadow-lg text-white hover:cursor-pointer`}
-      style={{ background }}
+    <a 
+      className={`group relative rounded-lg border border-gray-200 bg-gradient-to-br from-white via-gray-50/80 to-gray-100/50 px-6 py-3
+                 dark:border-gray-800 dark:from-gray-900/60 dark:via-gray-900/40 dark:to-gray-950
+                 hover:shadow-md ${hoverBorder}
+                 transition-all duration-300 ease-in-out flex items-center w-full h-full`}
       onClick={onClick}
+      style={{ 
+        cursor: 'pointer',
+      }}
     >
-      <div className="p-2 bg-linear-to-b bg-black/[0.04] from-black/[0.04] to-transparent to-20% text-xs">
-        {timeAgo(updated_at)}
+      {/* Hover overlay with color */}
+      <div 
+        className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out 
+                   bg-gradient-to-br ${hoverGradient}`}
+      ></div>
+
+      {/* Content positioned above the overlay */}
+      <div className="relative z-10 flex flex-col justify-center w-full">
+        <div className="flex items-center justify-start gap-2">
+          {/* Colored dot visible at all times */}
+          <span className={`h-1.5 w-1.5 rounded-full ${colorStyle.dotColorClass}`}></span>
+          <p className="text-[16px] font-semibold truncate">{normalization(title)}</p>
+        </div>
+        <p className="text-[14px] text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300 mt-1 line-clamp-1">
+          {description}
+        </p>
       </div>
-      <div className="p-3">
-        <h3 className="text-lg font-bold ">{normalization(title)}</h3>
-        <p className="text-sm mt-1 opacity-90">{description}</p>
+    </a>
+  );
+};
+
+export const CardRegistryGroup = ({
+  title,
+  cards,
+  onCardClick,
+}: CardRegistryGroupProps) => {
+  return (
+    <div className="group -ml-4">
+      <div className="mb-8 flex items-center justify-start gap-3">
+        <h2 className="text-xl font-semibold">{title}</h2>
+        <div className="h-px flex-1 translate-y-px bg-gradient-to-r from-gray-200/60 from-60% to-transparent dark:from-gray-800/60 dark:to-gray-950"></div>
       </div>
-      <div className="p-2 bg-linear-to-b bg-black/[0.04] from-black/[0.04] to-transparent to-20%">
-        <p className="text-sm mt-1 opacity-90">Record Count: {record_count}</p>
+      <div className="flex flex-wrap gap-4 justify-start">
+        {cards.map((card, index) => (
+          <div 
+            key={index}
+            style={{ width: "406px", height: "70px" }}
+          >
+            <CardRegistry
+              {...card}
+              onClick={() => onCardClick && onCardClick(card)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

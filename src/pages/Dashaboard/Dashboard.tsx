@@ -96,11 +96,11 @@ const Dashboard = () => {
       <div
         className={`fixed top-0 left-0 right-0 z-50 bg-primary dark:bg-primary border-b border-gray-200 dark:border-gray-700 
         flex items-center justify-between px-4 py-2 transition-all duration-300
-        ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none h-0"}`}
       >
         <div className="flex-1">{/* Empty div for alignment purposes */}</div>
 
-        <div className={`relative max-w-md w-60 mx-4`}>
+        <div className={`relative max-w-md w-full mx-4`}>
           <SearchBar
             value={searchQuery}
             onChange={handleSearchChange}
@@ -150,8 +150,8 @@ const Dashboard = () => {
       {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
-          className={`p-5 max-w-9/12 mx-auto overflow-y-auto flex-1 w-full no-scrollbar ${
-            scrolled ? "mt-20" : ""
+          className={`container mx-auto px-4 md:px-6 pb-8 overflow-y-auto flex-1 w-full no-scrollbar ${
+            scrolled ? "mt-24" : ""
           }`}
           onScroll={handleScroll}
         >
@@ -180,20 +180,16 @@ const Dashboard = () => {
               </p>
             </div>
           ) : null}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6 auto-rows-fr">
             {data &&
               namespaceData.map((item: namespace, index: number) => (
                 <Card
                   key={index}
-                  imageUrl={item.meta?.logoimage ? item.meta.logoimage : ""}
+                  namespace_id={item.namespace_id}
                   title={item.name}
                   description={item.description}
-                  onClick={() =>
-                    navigate({
-                      to: "/registries/$namespace_id",
-                      params: { namespace_id: item.namespace_id },
-                    })
-                  }
+                  imageUrl={item.meta?.logoimage}
+                  recordCount={item.record_count || item.registry_count}
                 />
               ))}
           </div>
