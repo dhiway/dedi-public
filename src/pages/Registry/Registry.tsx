@@ -114,117 +114,127 @@ const Registry = () => {
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
       {/* Fixed navigation bar that appears when scrolled */}
       <div
-        className={`fixed top-0 left-0 right-0 z-50 bg-primary dark:bg-primary border-b border-gray-200 dark:border-gray-700 
-        flex items-center justify-between px-4 py-2 transition-all duration-300
-        ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed top-0 left-0 right-0 z-50 bg-primary/95 dark:bg-primary/95 backdrop-blur-md border-b border-gray-200/40 dark:border-gray-700/30
+        transition-all duration-300 transform
+        ${scrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
       >
-        <button
-          onClick={handleBackClick}
-          className="flex items-center justify-center p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          <span className="text-text dark:text-text">&larr;</span>
-        </button>
-
-        <div className="relative max-w-md w-120 mx-4">
-          <SearchBar
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search Registries"
-          />
-        </div>
-
-        <DarkModeToggle />
-      </div>
-      
-      {/* Top static header with search below */}
-      <div className="sticky top-0 z-40 bg-primary dark:bg-primary pt-3 pb-4">
-        <div className="flex items-center justify-between px-4">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <button
             onClick={handleBackClick}
-            className="flex items-center justify-center p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="p-2 rounded-full bg-gray-100/50 hover:bg-gray-200/80 dark:bg-gray-800/50 dark:hover:bg-gray-700/80 text-text hover:text-text/90 transition-colors duration-200 shadow-sm"
           >
             <span className="text-text dark:text-text">&larr;</span>
           </button>
-          
-          <DarkModeToggle />
-        </div>
-        
-        {/* Registries Heading with Icon */}
-        <div className="px-4 mt-3 mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-700 dark:text-gray-300 text-lg">📋</span>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Registries</h1>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Structured storage for managing and organizing entities
-          </p>
-        </div>
-        
-        <div className="px-4">
-          <div className="w-full">
+
+          <div className="w-full mx-auto" style={{ maxWidth: "calc(100% - 96px)" }}>
             <SearchBar
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search Registries"
             />
           </div>
+
+          <div>
+            <DarkModeToggle />
+          </div>
         </div>
       </div>
-
-      {isPending ? (
-        <div className="p-5 flex text-center justify-center items-center h-[40%] ">
-          <Loader />
-        </div>
-      ) : null}
       
-      {isError ? (
-        <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
-          <img
-            src={errorimg}
-            alt="Error occurred"
-            className="w-full h-45 object-fit rounded-xl"
+      {/* Top static header with theme toggle and back button */}
+      <div className="w-full bg-primary dark:bg-primary border-b border-gray-200/40 dark:border-gray-700/30 py-3 px-4">
+        <div className="container mx-auto flex items-center justify-between">
+          <button
+            onClick={handleBackClick}
+            className="p-2 rounded-full bg-gray-100/50 hover:bg-gray-200/80 dark:bg-gray-800/50 dark:hover:bg-gray-700/80 text-text hover:text-text/90 transition-colors duration-200 shadow-sm"
+          >
+            <span className="text-text dark:text-text">&larr;</span>
+          </button>
+          
+          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Registries</h1>
+          
+          <DarkModeToggle />
+        </div>
+      </div>
+      
+      {/* Main content area */}
+      <div
+        ref={scrollContainerRef}
+        className="container mx-auto px-4 md:px-6 pb-8 overflow-y-auto flex-1 w-full no-scrollbar pt-8"
+        onScroll={handleScroll}
+      >
+        {/* Search Bar - centered, matching Directory.tsx */}
+        <div className="mb-8">
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search Registries"
           />
-          <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-            Opps! Something went wrong
-          </p>
         </div>
-      ) : null}
-      
-      {data || nomatchFound ? (
-        <div
-          ref={scrollContainerRef}
-          className="p-4 overflow-y-auto transition-all duration-500 flex-1 w-full no-scrollbar"
-          onScroll={handleScroll}
-        >
-          {nomatchFound ? (
-            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-              <img
-                src={norecords}
-                alt="No records found"
-                className="w-full h-45 object-fit rounded-xl"
-              />
-              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-                No match found !!
-              </p>
+        
+        {/* Loading State */}
+        {isPending && (
+          <div className="p-5 flex text-center justify-center items-center h-[40%]">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
+          </div>
+        )}
+        
+        {/* Error State */}
+        {isError && !nomatchFound && (
+          <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
+            <img
+              src={errorimg}
+              alt="Error occurred"
+              className="w-full h-45 object-fit rounded-xl"
+            />
+            <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+              Oops! Something went wrong
+            </p>
+          </div>
+        )}
+        
+        {/* No Match Found State */}
+        {nomatchFound && (
+          <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+            <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <span className="text-4xl">🔍</span>
             </div>
-          ) : null}
-
-          {filteredRegistries.length === 0 && !nomatchFound ? (
-            <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
-              <img
-                src={norecords}
-                alt="No records found"
-                className="w-full h-45 object-fit rounded-xl"
-              />
-              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-                No registries found !!
-              </p>
+            <p className="text-xl font-semibold text-text dark:text-text">
+              No match found
+            </p>
+            <p className="text-gray-500 dark:text-gray-400">
+              Try adjusting your search criteria
+            </p>
+          </div>
+        )}
+        
+        {/* Empty State */}
+        {filteredRegistries.length === 0 && !isPending && !isError && !nomatchFound && (
+          <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+            <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <span className="text-4xl">📁</span>
             </div>
-          ) : null}
+            <p className="text-xl font-semibold text-text dark:text-text">
+              No registries found
+            </p>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              There are no registries in this namespace yet
+            </p>
+          </div>
+        )}
+        
+        {/* Card Group Title with line - only show when there are registries */}
+        {filteredRegistries.length > 0 && !isPending && !isError && (
+          <div className="mb-8 flex items-center justify-start gap-3">
+            <h2 className="text-xl font-semibold">Registries</h2>
+            <div className="h-px flex-1 translate-y-px bg-gradient-to-r from-gray-200/60 from-60% to-transparent dark:from-gray-800/40 dark:to-transparent"></div>
+          </div>
+        )}
 
-          <div className="flex flex-wrap gap-4 justify-start">
+        {/* Registry Cards - Using grid for responsive 3-column layout */}
+        {filteredRegistries.length > 0 && !isPending && !isError && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRegistries.map((item: registry, index: number) => (
-              <div key={index} style={{ width: "406px", height: "70px" }}>
+              <div key={index} className="h-[70px]">
                 <CardRegistry
                   title={item.registry_name}
                   description={item.description}
@@ -235,8 +245,8 @@ const Registry = () => {
               </div>
             ))}
           </div>
-        </div>
-      ) : null}
+        )}
+      </div>
     </div>
   );
 };
