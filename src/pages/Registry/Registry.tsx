@@ -159,93 +159,95 @@ const Registry = () => {
       {/* Main content area */}
       <div
         ref={scrollContainerRef}
-        className="container mx-auto px-4 md:px-6 pb-8 overflow-y-auto flex-1 w-full no-scrollbar pt-8"
+        className="flex-1 w-full overflow-y-auto no-scrollbar pt-8"
         onScroll={handleScroll}
       >
-        {/* Search Bar - centered, matching Directory.tsx */}
-        <div className="mb-8">
-          <SearchBar
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search Registries"
-          />
-        </div>
-        
-        {/* Loading State */}
-        {isPending && (
-          <div className="p-5 flex text-center justify-center items-center h-[40%]">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
-          </div>
-        )}
-        
-        {/* Error State */}
-        {isError && !nomatchFound && (
-          <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
-            <img
-              src={errorimg}
-              alt="Error occurred"
-              className="w-full h-45 object-fit rounded-xl"
+        <div className="container mx-auto px-4 md:px-6">
+          {/* Search Bar - centered, matching Directory.tsx */}
+          <div className="mb-8">
+            <SearchBar
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search Registries"
             />
-            <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-              Oops! Something went wrong
-            </p>
           </div>
-        )}
-        
-        {/* No Match Found State */}
-        {nomatchFound && (
-          <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-            <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <span className="text-4xl">🔍</span>
+          
+          {/* Loading State */}
+          {isPending && (
+            <div className="p-5 flex text-center justify-center items-center h-[40%]">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
             </div>
-            <p className="text-xl font-semibold text-text dark:text-text">
-              No match found
-            </p>
-            <p className="text-gray-500 dark:text-gray-400">
-              Try adjusting your search criteria
-            </p>
-          </div>
-        )}
-        
-        {/* Empty State */}
-        {filteredRegistries.length === 0 && !isPending && !isError && !nomatchFound && (
-          <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-            <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <span className="text-4xl">📁</span>
+          )}
+          
+          {/* Error State */}
+          {isError && !nomatchFound && (
+            <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
+              <img
+                src={errorimg}
+                alt="Error occurred"
+                className="w-full h-45 object-fit rounded-xl"
+              />
+              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+                Oops! Something went wrong
+              </p>
             </div>
-            <p className="text-xl font-semibold text-text dark:text-text">
-              No registries found
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
-              There are no registries in this namespace yet
-            </p>
-          </div>
-        )}
-        
-        {/* Card Group Title with line - only show when there are registries */}
-        {filteredRegistries.length > 0 && !isPending && !isError && (
-          <div className="mb-8 flex items-center justify-start gap-3">
-            <h2 className="text-xl font-semibold">Registries</h2>
-            <div className="h-px flex-1 translate-y-px bg-gradient-to-r from-gray-200/60 from-60% to-transparent dark:from-gray-800/40 dark:to-transparent"></div>
-          </div>
-        )}
-
-        {/* Registry Cards - Using grid for responsive 3-column layout */}
-        {filteredRegistries.length > 0 && !isPending && !isError && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredRegistries.map((item: registry, index: number) => (
-              <div key={index} className="h-[70px]">
-                <CardRegistry
-                  title={item.registry_name}
-                  description={item.description}
-                  record_count={item.record_count}
-                  updated_at={item.updated_at}
-                  onClick={() => handleCardClick(item.registry_name)}
-                />
+          )}
+          
+          {/* No Match Found State */}
+          {nomatchFound && (
+            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+              <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                <span className="text-4xl">🔍</span>
               </div>
-            ))}
-          </div>
-        )}
+              <p className="text-xl font-semibold text-text dark:text-text">
+                No match found
+              </p>
+              <p className="text-gray-500 dark:text-gray-400">
+                Try adjusting your search criteria
+              </p>
+            </div>
+          )}
+          
+          {/* Empty State */}
+          {filteredRegistries.length === 0 && !isPending && !isError && !nomatchFound && (
+            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+              <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                <span className="text-4xl">📁</span>
+              </div>
+              <p className="text-xl font-semibold text-text dark:text-text">
+                No registries found
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
+                There are no registries in this namespace yet
+              </p>
+            </div>
+          )}
+          
+          {/* Card Group Title with line - only show when there are registries */}
+          {filteredRegistries.length > 0 && !isPending && !isError && (
+            <div className="mb-8 flex items-center justify-start gap-3">
+              <h2 className="text-xl font-semibold">Registries</h2>
+              <div className="h-px flex-1 translate-y-px bg-gradient-to-r from-gray-200/60 from-60% to-transparent dark:from-gray-800/40 dark:to-transparent"></div>
+            </div>
+          )}
+
+          {/* Registry Cards - Using grid for responsive 3-column layout */}
+          {filteredRegistries.length > 0 && !isPending && !isError && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredRegistries.map((item: registry, index: number) => (
+                <div key={index} className="h-[70px]">
+                  <CardRegistry
+                    title={item.registry_name}
+                    description={item.description}
+                    record_count={item.record_count}
+                    updated_at={item.updated_at}
+                    onClick={() => handleCardClick(item.registry_name)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

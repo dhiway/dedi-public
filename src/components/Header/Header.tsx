@@ -28,7 +28,12 @@ const Header = ({
         scrolled ? "h-0 opacity-0" : "h-[30%] opacity-100"
       }`}
     >
-      <h1 className="text-white text-4xl font-bold uppercase">{title}</h1>
+      <h1
+        className="text-white text-4xl font-bold uppercase"
+        style={{ fontFamily: "var(--font-loremipsum)" }}
+      >
+        {title}
+      </h1>
       <p className="text-gray-300 text-lg mt-3">{description}</p>
       <div className="absolute top-4 left-4">
         {showBackButton && (

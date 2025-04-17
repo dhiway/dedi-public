@@ -129,14 +129,15 @@ const Records = () => {
       )}
 
       {!isPending && !isError && data.data.records.length === 0 && (
-        <div className="p-5  overflow-y-auto justify-center flex flex-col text-center">
-          <img
-            src={norecords}
-            alt={"here error page"}
-            className="w-full h-45 object-fit rounded-xl"
-          />
-          <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-            No records found !!
+        <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+          <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+            <span className="text-4xl">📁</span>
+          </div>
+          <p className="text-xl font-semibold text-text dark:text-text">
+            No records found
+          </p>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            There are no records in this registry yet
           </p>
         </div>
       )}

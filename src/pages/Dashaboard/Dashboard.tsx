@@ -150,48 +150,50 @@ const Dashboard = () => {
       {data || nomatchFound ? (
         <div
           ref={scrollContainerRef}
-          className={`container mx-auto px-4 md:px-6 pb-8 overflow-y-auto flex-1 w-full no-scrollbar ${
+          className={`flex-1 w-full overflow-y-auto no-scrollbar ${
             scrolled ? "mt-24" : ""
           }`}
           onScroll={handleScroll}
         >
-          <div className="flex justify-center w-full">
-            <div
-              className={`relative mt-3 mb-5 w-full max-w-md ${
-                scrolled ? "hidden" : ""
-              }`}
-            >
-              <SearchBar
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search Namespace"
-              />
-            </div>
-          </div>
-          {nomatchFound ? (
-            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-              <img
-                src={norecords}
-                alt={"here error page"}
-                className="w-full h-45 object-fit rounded-xl"
-              />
-              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-                No match found !!
-              </p>
-            </div>
-          ) : null}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6 auto-rows-fr">
-            {data &&
-              namespaceData.map((item: namespace, index: number) => (
-                <Card
-                  key={index}
-                  namespace_id={item.namespace_id}
-                  title={item.name}
-                  description={item.description}
-                  imageUrl={item.meta?.logoimage}
-                  recordCount={item.record_count || item.registry_count}
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex justify-center w-full">
+              <div
+                className={`relative mt-3 mb-5 w-full max-w-md ${
+                  scrolled ? "hidden" : ""
+                }`}
+              >
+                <SearchBar
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search Namespace"
                 />
-              ))}
+              </div>
+            </div>
+            {nomatchFound ? (
+              <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
+                <img
+                  src={norecords}
+                  alt={"here error page"}
+                  className="w-full h-45 object-fit rounded-xl"
+                />
+                <p className="pt-5 text-text text-3xl font-bold dark:text-text">
+                  No match found !!
+                </p>
+              </div>
+            ) : null}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6 auto-rows-fr">
+              {data &&
+                namespaceData.map((item: namespace, index: number) => (
+                  <Card
+                    key={index}
+                    namespace_id={item.namespace_id}
+                    title={item.name}
+                    description={item.description}
+                    imageUrl={item.meta?.logoimage}
+                    recordCount={item.record_count || item.registry_count}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       ) : null}
