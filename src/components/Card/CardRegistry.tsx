@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { normalization } from "../../utils/helper";
 import { getCardColor, getHoverGradient, getHoverBorder, ColorType } from "../../utils/cardStyles";
+import { motion } from "framer-motion";
 
 type CardProps = {
   title: string;
@@ -37,14 +38,29 @@ const CardRegistry = ({
   const hoverBorder = useMemo(() => getHoverBorder(colorStyle.colorScheme), [colorStyle]);
 
   return (
-    <a 
+    <motion.div
       className={`group relative rounded-lg border border-gray-200 bg-gradient-to-br from-white via-gray-50/80 to-gray-100/50 px-6 py-3
                  dark:border-gray-800 dark:from-gray-900/60 dark:via-gray-900/40 dark:to-gray-950
                  hover:shadow-md ${hoverBorder}
                  transition-all duration-300 ease-in-out flex items-center w-full h-full`}
       onClick={onClick}
-      style={{ 
-        cursor: 'pointer',
+      style={{ cursor: 'pointer' }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+        delay: Math.random() * 0.2,
+      }}
+      whileHover={{
+        scale: 1.02,
+        transition: { duration: 0.2 }
+      }}
+      whileTap={{
+        scale: 0.97,
+        opacity: 0.92,
+        transition: { duration: 0.1 }
       }}
     >
       {/* Hover overlay with color */}
@@ -64,7 +80,7 @@ const CardRegistry = ({
           {description}
         </p>
       </div>
-    </a>
+    </motion.div>
   );
 };
 

@@ -72,7 +72,7 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
 
   return (
     <motion.div
-      className="group relative flex flex-col bg-primary dark:bg-primary border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden cursor-pointer h-full
+      className="group relative flex flex-col bg-primary dark:bg-primary border border-gray-400 dark:border-gray-700 rounded-xl overflow-hidden cursor-pointer h-full
       hover:shadow-xl hover:shadow-secondary/10 hover:border-secondary/40 hover:-translate-y-1"
       onClick={handleClick}
       style={{ minHeight: '260px', height: '100%', width: '100%' }}
