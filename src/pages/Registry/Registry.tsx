@@ -30,10 +30,10 @@ const Registry = () => {
   };
 
   const registryDataGet = async () => {
+    const selectedApiEndpoint =
+      localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_ENDPOINT;
     const response = await axios.get(
-      `${
-        import.meta.env.VITE_API_ENDPOINT
-      }/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
+      `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
     );
     return response.data;
   };
@@ -67,9 +67,8 @@ const Registry = () => {
   // Initialize filtered registries when data first loads
   useEffect(() => {
     setNoMatchFound(false);
-    if (data) {
-      setFilteredRegistries(data.data.registries);
-    }
+    // safely use optional chaining to avoid errors if data or data.data is undefined
+    setFilteredRegistries(data?.data?.registries || []);
   }, [data]);
 
   // Clean up timer on unmount
