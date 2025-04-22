@@ -16,6 +16,17 @@ const ApiDropdown = () => {
     }
   }, []);
 
+  // Poll localStorage every 500ms to synchronize changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem("selectedApiEndpoint");
+      if (stored && stored !== selected) {
+        setSelected(stored);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [selected]);
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
     localStorage.setItem("selectedApiEndpoint", e.target.value);
