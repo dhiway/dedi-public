@@ -25,6 +25,11 @@ const Records = () => {
     from: "/records/$namespace_id/$registry_id",
   });
 
+  // Read the selected endpoint from localStorage (fallback provided)
+  const selectedEndpoint =
+    localStorage.getItem("selectedApiEndpoint") ||
+    import.meta.env.VITE_API_SANDBOX_ENDPOINT;
+
   const handleScroll = () => {
     if (scrollContainerRef.current) {
       const scrollTop = scrollContainerRef.current.scrollTop;
@@ -33,11 +38,8 @@ const Records = () => {
   };
 
   const fetchRecordsData = async () => {
-    const response = await axios.get(
-      `${
-        import.meta.env.VITE_API_ENDPOINT
-      }/dedi/query/${namespace_id}/${registry_id}?page=${page}&page_size=${pageSize}`
-    );
+    const url = `${selectedEndpoint}/dedi/query/${namespace_id}?registry=${registry_id}&page=${page}&page_size=${pageSize}`;
+    const response = await axios.get(url);
     return response.data;
   };
 
@@ -47,7 +49,7 @@ const Records = () => {
     data = { data: { records: [] } },
     error,
   } = useQuery({
-    queryKey: ["recordsDataGet", namespace_id, registry_id, page, pageSize],
+    queryKey: ["recordsDataGet", namespace_id, registry_id, page, pageSize, selectedEndpoint],
     queryFn: fetchRecordsData,
     enabled: !!namespace_id,
   });
@@ -59,11 +61,13 @@ const Records = () => {
   }, [isError, error]);
 
   useEffect(() => {
-    if (data.data.records.length > 0) {
+    if (data?.data?.records && data.data.records.length > 0) {
       const detailsArray = data.data.records.map(
         (record: { details?: Record<string, any> }) => record.details || {}
       );
       SetRecordData(detailsArray);
+    } else {
+      SetRecordData([]);
     }
   }, [data]);
 
@@ -113,6 +117,7 @@ const Records = () => {
         description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
         showBackButton={true}
         onBackClick={() => window.history.back()}
+        hideApiDropdown={true}  
       />
 
       {isPending && (
@@ -128,7 +133,7 @@ const Records = () => {
         </div>
       )}
 
-      {!isPending && !isError && data.data.records.length === 0 && (
+      {!isPending && !isError && (data?.data?.records?.length ?? 0) === 0 && (
         <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
           <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
             <span className="text-4xl">📁</span>
@@ -142,7 +147,7 @@ const Records = () => {
         </div>
       )}
 
-      {!isPending && !isError && data.data.records.length > 0 && (
+      {!isPending && !isError && (data?.data?.records?.length ?? 0) > 0 && (
         <>
           <div
             className={`rounded-xl flex flex-col max-w-9/12 mx-auto pt-5 pb-5 ${
@@ -150,7 +155,7 @@ const Records = () => {
             }`}
           >
             <div className="mb-4 text-sm text-gray-500">
-              Showing {data.data.records.length} records
+              Showing {(data?.data?.records?.length ?? 0)} records
             </div>
             <table className="w-full rounded-xl table-fixed  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <caption className="p-5  rounded-t-xl text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
@@ -212,7 +217,7 @@ const Records = () => {
                 <button
                   className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setPage((prev) => prev + 1)}
-                  disabled={data.data.records.length < pageSize}
+                  disabled={(data?.data?.records?.length ?? 0) < pageSize}
                 >
                   &gt;
                 </button>

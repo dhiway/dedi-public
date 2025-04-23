@@ -1,4 +1,5 @@
 import DarkModeToggle from "../DarkMode/DarkModeToggle";
+import ApiDropdown from "../ApiDropdown/ApiDropdown";
 
 interface HeaderProps {
   title?: string;
@@ -6,6 +7,7 @@ interface HeaderProps {
   description: string;
   showBackButton?: boolean;
   onBackClick?: () => void;
+  hideApiDropdown?: boolean;
 }
 
 const Header = ({
@@ -14,6 +16,7 @@ const Header = ({
   scrolled,
   showBackButton = false,
   onBackClick,
+  hideApiDropdown = false,
 }: HeaderProps) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -35,7 +38,7 @@ const Header = ({
         {title}
       </h1>
       <p className="text-gray-300 text-lg mt-3">{description}</p>
-      <div className="absolute top-4 left-4">
+      <div className="absolute top-4 left-4 flex items-center gap-2">
         {showBackButton && (
           <button
             onClick={handleBackClick}
@@ -57,6 +60,7 @@ const Header = ({
             </svg>
           </button>
         )}
+        {!hideApiDropdown && <ApiDropdown />}
       </div>
       <div className="absolute top-4 right-4">
         <DarkModeToggle />

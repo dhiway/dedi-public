@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 import norecords from "../../assets/norecord.svg";
+import ApiDropdown from "../../components/ApiDropdown/ApiDropdown";
 
 const Dashboard = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -21,6 +22,9 @@ const Dashboard = () => {
   const [nomatchFound, setNoMatchFound] = useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [selectedEndpoint, setSelectedEndpoint] = useState(
+    localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_SANDBOX_ENDPOINT
+  );
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
@@ -29,25 +33,37 @@ const Dashboard = () => {
     }
   };
 
+  // Poll localStorage every 500ms for changes (since drop down is in Header)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const current =
+        localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_SANDBOX_ENDPOINT;
+      if (current !== selectedEndpoint) {
+        setSelectedEndpoint(current);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [selectedEndpoint]);
+
   const nameSpaceGet = async () => {
     const response = await axios.get(
-      `${
-        import.meta.env.VITE_API_ENDPOINT
-      }/dedi/internal/get-all-namepace?name=${debouncedSearchQuery}`
+      `${selectedEndpoint}/dedi/internal/get-all-namepace?name=${debouncedSearchQuery}`
     );
     return response.data;
   };
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["nameSpaceData", debouncedSearchQuery],
+    queryKey: ["nameSpaceData", debouncedSearchQuery, selectedEndpoint],
     queryFn: nameSpaceGet,
     retry: false,
   });
 
   useEffect(() => {
     setNoMatchFound(false);
-    if (data) {
+    if (data && data.data) {
       setNamespaceData(data.data);
+    } else {
+      setNamespaceData([]); // fallback to empty array
     }
   }, [data]);
 
@@ -98,7 +114,9 @@ const Dashboard = () => {
         flex items-center justify-between px-4 py-2 transition-all duration-300
         ${scrolled ? "opacity-100" : "opacity-0 pointer-events-none h-0"}`}
       >
-        <div className="flex-1">{/* Empty div for alignment purposes */}</div>
+        <div className="flex-1">
+          <ApiDropdown />
+        </div>
 
         <div className={`relative max-w-md w-full mx-4`}>
           <SearchBar
