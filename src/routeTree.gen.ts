@@ -17,7 +17,7 @@ import { Route as WatcherImport } from './routes/watcher'
 import { Route as RegistriesImport } from './routes/registries'
 import { Route as RecordsImport } from './routes/records'
 import { Route as RegistriesNamespaceidImport } from './routes/registries.$namespace_id'
-import { Route as RecordsNamespaceidRegistryidImport } from './routes/records.$namespace_id.$registry_id'
+import { Route as RecordsNamespaceidRegistrynameImport } from './routes/records.$namespace_id.$registry_name'
 
 // Create Virtual Routes
 
@@ -55,10 +55,10 @@ const RegistriesNamespaceidRoute = RegistriesNamespaceidImport.update({
   getParentRoute: () => RegistriesRoute,
 } as any)
 
-const RecordsNamespaceidRegistryidRoute =
-  RecordsNamespaceidRegistryidImport.update({
-    id: '/$namespace_id/$registry_id',
-    path: '/$namespace_id/$registry_id',
+const RecordsNamespaceidRegistrynameRoute =
+  RecordsNamespaceidRegistrynameImport.update({
+    id: '/$namespace_id/$registry_name',
+    path: '/$namespace_id/$registry_name',
     getParentRoute: () => RecordsRoute,
   } as any)
 
@@ -101,11 +101,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistriesNamespaceidImport
       parentRoute: typeof RegistriesImport
     }
-    '/records/$namespace_id/$registry_id': {
-      id: '/records/$namespace_id/$registry_id'
-      path: '/$namespace_id/$registry_id'
-      fullPath: '/records/$namespace_id/$registry_id'
-      preLoaderRoute: typeof RecordsNamespaceidRegistryidImport
+    '/records/$namespace_id/$registry_name': {
+      id: '/records/$namespace_id/$registry_name'
+      path: '/$namespace_id/$registry_name'
+      fullPath: '/records/$namespace_id/$registry_name'
+      preLoaderRoute: typeof RecordsNamespaceidRegistrynameImport
       parentRoute: typeof RecordsImport
     }
   }
@@ -114,11 +114,11 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface RecordsRouteChildren {
-  RecordsNamespaceidRegistryidRoute: typeof RecordsNamespaceidRegistryidRoute
+  RecordsNamespaceidRegistrynameRoute: typeof RecordsNamespaceidRegistrynameRoute
 }
 
 const RecordsRouteChildren: RecordsRouteChildren = {
-  RecordsNamespaceidRegistryidRoute: RecordsNamespaceidRegistryidRoute,
+  RecordsNamespaceidRegistrynameRoute: RecordsNamespaceidRegistrynameRoute,
 }
 
 const RecordsRouteWithChildren =
@@ -142,7 +142,7 @@ export interface FileRoutesByFullPath {
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
   '/registries/$namespace_id': typeof RegistriesNamespaceidRoute
-  '/records/$namespace_id/$registry_id': typeof RecordsNamespaceidRegistryidRoute
+  '/records/$namespace_id/$registry_name': typeof RecordsNamespaceidRegistrynameRoute
 }
 
 export interface FileRoutesByTo {
@@ -151,7 +151,7 @@ export interface FileRoutesByTo {
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
   '/registries/$namespace_id': typeof RegistriesNamespaceidRoute
-  '/records/$namespace_id/$registry_id': typeof RecordsNamespaceidRegistryidRoute
+  '/records/$namespace_id/$registry_name': typeof RecordsNamespaceidRegistrynameRoute
 }
 
 export interface FileRoutesById {
@@ -161,7 +161,7 @@ export interface FileRoutesById {
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
   '/registries/$namespace_id': typeof RegistriesNamespaceidRoute
-  '/records/$namespace_id/$registry_id': typeof RecordsNamespaceidRegistryidRoute
+  '/records/$namespace_id/$registry_name': typeof RecordsNamespaceidRegistrynameRoute
 }
 
 export interface FileRouteTypes {
@@ -172,7 +172,7 @@ export interface FileRouteTypes {
     | '/registries'
     | '/watcher'
     | '/registries/$namespace_id'
-    | '/records/$namespace_id/$registry_id'
+    | '/records/$namespace_id/$registry_name'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,7 +180,7 @@ export interface FileRouteTypes {
     | '/registries'
     | '/watcher'
     | '/registries/$namespace_id'
-    | '/records/$namespace_id/$registry_id'
+    | '/records/$namespace_id/$registry_name'
   id:
     | '__root__'
     | '/'
@@ -188,7 +188,7 @@ export interface FileRouteTypes {
     | '/registries'
     | '/watcher'
     | '/registries/$namespace_id'
-    | '/records/$namespace_id/$registry_id'
+    | '/records/$namespace_id/$registry_name'
   fileRoutesById: FileRoutesById
 }
 
@@ -228,7 +228,7 @@ export const routeTree = rootRoute
     "/records": {
       "filePath": "records.tsx",
       "children": [
-        "/records/$namespace_id/$registry_id"
+        "/records/$namespace_id/$registry_name"
       ]
     },
     "/registries": {
@@ -244,8 +244,8 @@ export const routeTree = rootRoute
       "filePath": "registries.$namespace_id.tsx",
       "parent": "/registries"
     },
-    "/records/$namespace_id/$registry_id": {
-      "filePath": "records.$namespace_id.$registry_id.tsx",
+    "/records/$namespace_id/$registry_name": {
+      "filePath": "records.$namespace_id.$registry_name.tsx",
       "parent": "/records"
     }
   }

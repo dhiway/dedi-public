@@ -97,10 +97,10 @@ const Registry = () => {
 
   const handleCardClick = (registry_name: string) => {
     navigate({
-      to: "/records/$namespace_id/$registry_id",
+      to: "/records/$namespace_id/$registry_name",
       params: {
         namespace_id: namespace_id as string,
-        registry_id: registry_name,
+        registry_name: registry_name,
       },
     });
   };

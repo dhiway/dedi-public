@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 const Header = ({
-  title = "NAMESPACE REGISTRY",
+  title = "NAMESPACE",
   description,
   scrolled,
   showBackButton = false,
