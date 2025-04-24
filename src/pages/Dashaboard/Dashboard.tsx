@@ -12,6 +12,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 import norecords from "../../assets/norecord.svg";
 import ApiDropdown from "../../components/ApiDropdown/ApiDropdown";
+import { getApiEndpoint } from "../../utils/helper";
 
 const Dashboard = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -22,38 +23,37 @@ const Dashboard = () => {
   const [nomatchFound, setNoMatchFound] = useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("");
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [selectedEndpoint, setSelectedEndpoint] = useState(
-    localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_SANDBOX_ENDPOINT
-  );
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
-      const scrollTop = scrollContainerRef.current.scrollTop;
-      setScrolled(scrollTop > 50);
+      const container = scrollContainerRef.current;
+      const scrollTop = container.scrollTop;
+      const clientHeight = container.clientHeight;
+      const scrollHeight = container.scrollHeight;
+      
+      if (scrollTop === 0) {
+        setScrolled(false);
+      }
+      
+      else if (scrollTop + clientHeight >= scrollHeight - 5) {
+        setScrolled(true);
+      } else {
+
+        setScrolled(false);
+      }
     }
   };
 
-  // Poll localStorage every 500ms for changes (since drop down is in Header)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const current =
-        localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_SANDBOX_ENDPOINT;
-      if (current !== selectedEndpoint) {
-        setSelectedEndpoint(current);
-      }
-    }, 500);
-    return () => clearInterval(interval);
-  }, [selectedEndpoint]);
-
   const nameSpaceGet = async () => {
+    const endpoint = getApiEndpoint();
     const response = await axios.get(
-      `${selectedEndpoint}/dedi/internal/get-all-namepace?name=${debouncedSearchQuery}`
+      `${endpoint}/dedi/internal/get-all-namepace?name=${debouncedSearchQuery}`
     );
     return response.data;
   };
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["nameSpaceData", debouncedSearchQuery, selectedEndpoint],
+    queryKey: ["nameSpaceData", debouncedSearchQuery],
     queryFn: nameSpaceGet,
     retry: false,
   });

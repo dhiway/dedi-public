@@ -1,3 +1,37 @@
+// Global store for current environment
+let currentEnvironment: string | null = null;
+
+// Initialize the environment from URL on load
+export function initializeEnvironment() {
+    const params = new URLSearchParams(window.location.search);
+    const envParam = params.get("env");
+    
+    // Set current environment
+    if (envParam === "beta" || envParam === "dev" || envParam === "sandbox") {
+        currentEnvironment = envParam;
+    } else {
+        currentEnvironment = "sandbox"; // Default
+    }
+    
+    return currentEnvironment;
+}
+
+// Get the current environment
+export function getCurrentEnvironment(): string {
+    if (currentEnvironment === null) {
+        initializeEnvironment();
+    }
+    return currentEnvironment || "sandbox";
+}
+
+// Update the current environment
+export function setCurrentEnvironment(env: string) {
+    if (env === "beta" || env === "dev" || env === "sandbox") {
+        currentEnvironment = env;
+        
+    }
+}
+
 export function timeAgo(updatedAt: string): string {
     const updatedDate = new Date(updatedAt);
     const currentDate = new Date();
@@ -21,4 +55,19 @@ export function normalization(inputString:string){
             return key.charAt(0).toUpperCase() + key.slice(1);
         });
     return normalizedList.toString().replace(/,/g," ");
+}
+
+export function getApiEndpoint(): string {
+    // Use the global environment state instead of reading from URL
+    const env = getCurrentEnvironment();
+    
+    let endpoint = import.meta.env.VITE_API_SANDBOX_ENDPOINT || "https://sandbox.dedi.global";
+    
+    if (env === "beta") {
+        endpoint = import.meta.env.VITE_API_BETA_ENDPOINT || "https://beta.dedi.global";
+    } else if (env === "dev") {
+        endpoint = import.meta.env.VITE_API_DEV_ENDPOINT || "https://dev.dedi.global";
+    }
+    
+    return endpoint;
 }

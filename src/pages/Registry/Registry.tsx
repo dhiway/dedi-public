@@ -10,6 +10,7 @@ import ToastUtils from "../../components/Toast/ToastUtils";
 import Loader from "../../components/Loader/Loader";
 import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 import SearchBar from "../../components/SearchBar/SearchBar";
+import { getApiEndpoint, getCurrentEnvironment } from "../../utils/helper";
 
 const Registry = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -30,8 +31,10 @@ const Registry = () => {
   };
 
   const registryDataGet = async () => {
-    const selectedApiEndpoint =
-      localStorage.getItem("selectedApiEndpoint") || import.meta.env.VITE_API_ENDPOINT;
+    // Get the endpoint directly each time to ensure latest value
+    const selectedApiEndpoint = getApiEndpoint();
+    
+    
     const response = await axios.get(
       `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
     );
@@ -39,10 +42,11 @@ const Registry = () => {
   };
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["registryDataGet", debouncedSearchQuery],
+    queryKey: ["registryDataGet", namespace_id, debouncedSearchQuery, window.location.search],
     queryFn: registryDataGet,
     staleTime: 0,
     gcTime: 0,
+    retry: false, // Don't retry on failure
   });
 
   // Handle search input with debounce
@@ -96,16 +100,21 @@ const Registry = () => {
   }
 
   const handleCardClick = (registry_name: string) => {
+    // Use current environment from global state
+    const currentEnv = getCurrentEnvironment();
+    
     navigate({
       to: "/records/$namespace_id/$registry_name",
       params: {
         namespace_id: namespace_id as string,
         registry_name: registry_name,
       },
+      search: currentEnv ? { env: currentEnv } : undefined
     });
   };
 
   const handleBackClick = () => {
+    // Use native browser back - the URL parameters will be preserved automatically
     window.history.back();
   };
 
