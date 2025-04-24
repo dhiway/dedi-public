@@ -132,7 +132,7 @@ const Dashboard = () => {
       </div>
       <Header
         scrolled={scrolled}
-        description="A namespace registry serves as a central repository for storing and
+        description="A namespace serves as a central repository for storing and
         managing namespaces."
       />
 

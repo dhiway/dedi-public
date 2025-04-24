@@ -21,8 +21,8 @@ const Records = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(30);
-  const { namespace_id, registry_id } = useParams({
-    from: "/records/$namespace_id/$registry_id",
+  const { namespace_id, registry_name } = useParams({
+    from: "/records/$namespace_id/$registry_name",
   });
 
   // Read the selected endpoint from localStorage (fallback provided)
@@ -38,7 +38,7 @@ const Records = () => {
   };
 
   const fetchRecordsData = async () => {
-    const url = `${selectedEndpoint}/dedi/query/${namespace_id}?registry=${registry_id}&page=${page}&page_size=${pageSize}`;
+    const url = `${selectedEndpoint}/dedi/query/${namespace_id}/${registry_name}?page=${page}&pageSize=${pageSize}`;
     const response = await axios.get(url);
     return response.data;
   };
@@ -49,7 +49,7 @@ const Records = () => {
     data = { data: { records: [] } },
     error,
   } = useQuery({
-    queryKey: ["recordsDataGet", namespace_id, registry_id, page, pageSize, selectedEndpoint],
+    queryKey: ["recordsDataGet", namespace_id, registry_name, page, pageSize, selectedEndpoint],
     queryFn: fetchRecordsData,
     enabled: !!namespace_id,
   });
@@ -107,7 +107,7 @@ const Records = () => {
     initialState: { pagination: { pageSize } },
   });
 
-  if (!namespace_id || !registry_id) return null;
+  if (!namespace_id || !registry_name) return null;
 
   return (
     <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
@@ -159,7 +159,7 @@ const Records = () => {
             </div>
             <table className="w-full rounded-xl table-fixed  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <caption className="p-5  rounded-t-xl text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
-                {registry_id}
+                {registry_name}
               </caption>
               <thead className="bg-accent sticky top-0 text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
