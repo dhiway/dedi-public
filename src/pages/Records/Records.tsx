@@ -38,7 +38,7 @@ const Records = () => {
   };
 
   const fetchRecordsData = async () => {
-    const url = `${selectedEndpoint}/dedi/query/${namespace_id}?registry=${registry_name}&page=${page}&page_size=${pageSize}`;
+    const url = `${selectedEndpoint}/dedi/query/${namespace_id}/${registry_name}?page=${page}&pageSize=${pageSize}`;
     const response = await axios.get(url);
     return response.data;
   };
