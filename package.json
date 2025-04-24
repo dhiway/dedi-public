@@ -24,6 +24,7 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-split": "^2.0.14",
+    "react-window": "^1.8.11",
     "tailwindcss": "^4.0.15",
     "zustand": "^5.0.3"
   },
@@ -33,6 +34,7 @@
     "@tanstack/router-plugin": "^1.114.27",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",

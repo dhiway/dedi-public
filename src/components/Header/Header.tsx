@@ -27,7 +27,7 @@ const Header = ({
   };
   return (
     <div
-      className={` w-full bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-center text-center px-4  transition-all duration-500 ${
+      className={`w-full bg-gradient-to-r from-indigo-900 to-black flex flex-col justify-center items-center text-center px-4 transition-all duration-500 ${
         scrolled ? "h-0 opacity-0" : "h-[30%] opacity-100"
       }`}
     >

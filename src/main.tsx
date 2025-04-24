@@ -5,6 +5,10 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "./hooks/Themecontext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { initializeEnvironment } from "./utils/helper";
+
+// Initialize the environment at app startup
+initializeEnvironment();
 
 // Create a new router instance
 const router = createRouter({
