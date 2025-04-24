@@ -135,9 +135,9 @@ const Records = () => {
           </div>
         )}
         {isError && (
-          <div className="flex flex-col items-center text-center">
-            <img src={errorimg} alt="Error" className="w-1/2 h-auto rounded-xl" />
-            <p className="pt-5 text-3xl font-bold">Oops! Something went wrong</p>
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <img src={errorimg} alt="Error" className="w-full h-45 rounded-xl" />
+            <p className="pt-3 text-2xl font-bold">Oops! Something went wrong</p>
           </div>
         )}
         {!isPending && !isError && (data?.data?.records?.length ?? 0) === 0 && (
