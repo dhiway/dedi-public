@@ -6,6 +6,7 @@ const API_OPTIONS = [
   { label: "Sandbox", value: "sandbox" },
   { label: "Beta", value: "beta" },
   { label: "Dev", value: "dev" },
+  { label: "Custom", value: "custom" },
 ];
 
 const ApiDropdown = () => {
@@ -18,23 +19,32 @@ const ApiDropdown = () => {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newEnv = e.target.value; // e.g. "beta"
+    const newEnv = e.target.value;
+
+    const url = new URL(window.location.href);
     
+    if (newEnv === "custom") {
+      const customInput = window.prompt("Enter custom API endpoint (e.g., http://localhost:5106):");
+      if (customInput && customInput.trim() !== "") {
+        
+        url.searchParams.set("customEndpoint", customInput.trim());
+      } else {
+        // if no valid input, revert to currentEnv without proceeding further
+        return;
+      }
+    }else{
+      url.searchParams.delete("customEndpoint");
+    }
     
-    // Update global environment state
     setCurrentEnvironment(newEnv);
     
-    // Update URL with new environment
-    const url = new URL(window.location.href);
+    
     url.searchParams.set("env", newEnv);
     
-    // Update component state
     setCurrentEnv(newEnv);
     
-    // Invalidate all queries to force refetch with new endpoint
     queryClient.invalidateQueries();
     
-    // Update the URL and reload page to ensure clean state
     window.location.href = url.toString();
   };
 
