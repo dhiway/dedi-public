@@ -20,20 +20,25 @@ const ApiDropdown = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newEnv = e.target.value;
+
+    const url = new URL(window.location.href);
     
     if (newEnv === "custom") {
       const customInput = window.prompt("Enter custom API endpoint (e.g., http://localhost:5106):");
       if (customInput && customInput.trim() !== "") {
-        localStorage.setItem("CUSTOM_API_ENDPOINT", customInput.trim());
+        
+        url.searchParams.set("customEndpoint", customInput.trim());
       } else {
         // if no valid input, revert to currentEnv without proceeding further
         return;
       }
+    }else{
+      url.searchParams.delete("customEndpoint");
     }
     
     setCurrentEnvironment(newEnv);
     
-    const url = new URL(window.location.href);
+    
     url.searchParams.set("env", newEnv);
     
     setCurrentEnv(newEnv);

@@ -63,7 +63,8 @@ export function getApiEndpoint(): string {
     let endpoint = import.meta.env.VITE_API_SANDBOX_ENDPOINT || "https://sandbox.dedi.global";
     
     if (env === "custom") {
-        const customEndpoint = localStorage.getItem("CUSTOM_API_ENDPOINT");
+        const params = new URLSearchParams(window.location.search);
+        const customEndpoint = params.get("customEndpoint");
         endpoint = customEndpoint || endpoint;
     } else if (env === "beta") {
         endpoint = import.meta.env.VITE_API_BETA_ENDPOINT || "https://beta.dedi.global";
