@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { getCurrentEnvironment } from "../../utils/helper";
+import { Card as ShadcnCard, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type cardProps = {
   title: string;
@@ -99,10 +99,7 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
 
   return (
     <motion.div
-      className="group relative flex flex-col bg-primary dark:bg-primary border border-gray-400 dark:border-gray-700 rounded-xl overflow-hidden cursor-pointer h-full
-      hover:shadow-xl hover:shadow-secondary/10 hover:border-secondary/40 hover:-translate-y-1"
-      onClick={handleClick}
-      style={{ minHeight: '260px', height: '100%', width: '100%' }}
+      className="group relative h-full"
       layoutId={layoutId}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -122,63 +119,61 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
         transition: { duration: 0.1 }
       }}
     >
-      {/* Top Banner Image - Now using dynamic gradient with layoutId for shared transitions */}
-      <motion.div
-        className="w-full h-20 md:h-24 overflow-hidden transition-all duration-300 group-hover:saturate-150"
-        style={imageUrl ? {} : bannerStyle} // Apply gradient only if no image
-        layoutId={`banner-${namespace_id}`}
+      <ShadcnCard 
+        className="group relative flex flex-col overflow-hidden cursor-pointer h-full hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300"
+        onClick={handleClick}
+        style={{ minHeight: '260px', height: '100%', width: '100%' }}
       >
-        {imageUrl && (
-          <img 
-            src={imageUrl} 
-            alt={`${title} banner`} 
-            className="w-full h-full object-cover"
-          />
-        )}
-      </motion.div>
-
-      {/* Content Area */}
-      <motion.div 
-        className="p-5 pt-12 flex-grow flex flex-col relative"
-        layoutId={`content-${namespace_id}`}
-      > 
-        {/* Name */}
-        <motion.h6 
-          className="font-semibold text-base md:text-lg text-cardTitle truncate mb-2 transition-colors duration-300 group-hover:text-cardTitleHover"
-          layoutId={`title-${namespace_id}`}
+        {/* Top Banner Image - Now using dynamic gradient with layoutId for shared transitions */}
+        <motion.div
+          className="w-full h-20 md:h-24 overflow-hidden transition-all duration-300 group-hover:saturate-150"
+          style={imageUrl ? {} : bannerStyle} // Apply gradient only if no image
+          layoutId={`banner-${namespace_id}`}
         >
-          {title}
-        </motion.h6>
+          {imageUrl && (
+            <img 
+              src={imageUrl} 
+              alt={`${title} banner`} 
+              className="w-full h-full object-cover"
+            />
+          )}
+        </motion.div>
 
-        {/* Description */}
-        <motion.p 
-          className="text-xs md:text-sm text-cardDescription line-clamp-2 mb-auto flex-grow"
-          layoutId={`description-${namespace_id}`}
+        {/* Content Area */}
+        <CardContent className="p-5 pt-12 flex-grow flex flex-col relative">
+          {/* Name */}
+          <CardTitle 
+            className="text-base md:text-lg truncate mb-2 transition-colors duration-300 group-hover:text-primary"
+          >
+            {title}
+          </CardTitle>
+
+          {/* Description */}
+          <CardDescription 
+            className="text-xs md:text-sm line-clamp-2 mb-auto flex-grow"
+          >
+            {description}
+          </CardDescription>
+
+          {/* Stats without divider line */}
+          {recordCount !== undefined && (
+            <div className="text-xs text-muted-foreground mt-4">
+              <span className="font-medium text-foreground">
+                {recordCount.toLocaleString()}
+              </span>{' '}
+              Registries
+            </div>
+          )}
+        </CardContent>
+        
+        {/* Floating Icon/Avatar - Positioned Absolutely */}
+        <motion.div 
+          className="absolute top-16 left-4 w-14 h-14 md:w-16 md:h-16 rounded-lg border-4 border-card bg-primary flex items-center justify-center overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg"
+          layoutId={`icon-${namespace_id}`}
         >
-          {description}
-        </motion.p>
-
-        {/* Stats without divider line */}
-        {recordCount !== undefined && (
-          <motion.div 
-            className="text-xs text-cardStats mt-4"
-            layoutId={`stats-${namespace_id}`}
-          > 
-            <span className="font-medium text-cardStatsNumber">
-              {recordCount.toLocaleString()}
-            </span>{' '}
-            Registries
-          </motion.div>
-        )}
-      </motion.div>
-      
-      {/* Floating Icon/Avatar - Positioned Absolutely */}
-      <motion.div 
-        className="absolute top-16 left-4 w-14 h-14 md:w-16 md:h-16 rounded-lg border-4 border-primary dark:border-primary bg-secondary flex items-center justify-center overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg"
-        layoutId={`icon-${namespace_id}`}
-      >
-        <span className="text-white text-lg md:text-2xl font-bold">{title.charAt(0).toUpperCase()}</span>
-      </motion.div>
+          <span className="text-primary-foreground text-lg md:text-2xl font-bold">{title.charAt(0).toUpperCase()}</span>
+        </motion.div>
+      </ShadcnCard>
     </motion.div>
   );
 };

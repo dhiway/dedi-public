@@ -9,13 +9,15 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import errorimg from "../../assets/error.svg";
-import Header from "../../components/Header/Header";
 import axios from "axios";
 import Loader from "../../components/Loader/Loader";
 import { useQuery } from "@tanstack/react-query";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import { getApiEndpoint } from "../../utils/helper";
 import { FixedSizeList as List } from "react-window";
+import { MainLayout } from "../../components/layout/MainLayout";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const Records = () => {
   const [recordData, SetRecordData] = useState<Record<string, any>[]>([]);
@@ -89,7 +91,7 @@ const Records = () => {
 
     return Array.from(allKeys).map((key: string) =>
       columnHelper.accessor(
-        (row: unknown) => (row as Record<string, any>)[key],
+        (row: unknown) => (row as Record<string, unknown>)[key],
         {
           id: key,
           header: key.charAt(0).toUpperCase() + key.slice(1),
@@ -119,119 +121,155 @@ const Records = () => {
   if (!namespace_id || !registry_name) return null;
   
   return (
-    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text">
-      <Header
-        title={`RECORDS`}
-        scrolled={false}
-        description="Registries in a namespace serve as structured storage for managing and organizing entities like services, credentials, or identities."
-        showBackButton={true}
-        onBackClick={handleBackClick}
-        hideApiDropdown={true}  
-      />
-      
-      <div className="p-5">
+    <MainLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleBackClick}
+            className="flex items-center gap-2 bg-background border-border hover:bg-accent"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">Records</h1>
+            <p className="text-muted-foreground">
+              Records in {registry_name} registry
+            </p>
+          </div>
+        </div>
+
+        {/* Loading State */}
         {isPending && (
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center py-12">
             <Loader />
           </div>
         )}
+
+        {/* Error State */}
         {isError && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <img src={errorimg} alt="Error" className="w-full h-45 rounded-xl" />
-            <p className="pt-3 text-2xl font-bold">Oops! Something went wrong</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <img
+              src={errorimg}
+              alt="Error"
+              className="w-64 h-64 object-contain mb-6"
+            />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Oops! Something went wrong
+            </h2>
+            <p className="text-muted-foreground">
+              Please try again later or contact support if the problem persists.
+            </p>
           </div>
         )}
+
+        {/* Empty State */}
         {!isPending && !isError && (data?.data?.records?.length ?? 0) === 0 && (
-          <div className="flex flex-col text-center justify-center items-center h-[50%]">
-            <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <span className="text-4xl">📁</span>
-            </div>
-            <p className="text-xl font-semibold text-text dark:text-text">
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <img
+              src={norecords}
+              alt="No records"
+              className="w-64 h-64 object-contain mb-6"
+            />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
               No records found
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
-              There are no records in this registry yet
+            </h2>
+            <p className="text-muted-foreground">
+              There are no records in this registry yet.
             </p>
           </div>
         )}
+
+        {/* Records Table */}
         {!isPending && !isError && (data?.data?.records?.length ?? 0) > 0 && (
-          <div className="rounded-xl flex flex-col max-w-9/12 mx-auto pt-5 pb-5 relative">
-            <div className="mb-4 text-sm text-gray-500">
-              Showing {(data?.data?.records?.length ?? 0)} records
+          <div className="bg-card rounded-lg border shadow-sm">
+            <div className="p-6 border-b">
+              <h2 className="text-xl font-semibold capitalize">{registry_name}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Showing {(data?.data?.records?.length ?? 0)} records
+              </p>
             </div>
-            <table className="w-full rounded-xl table-fixed text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <caption className="p-5 rounded-t-xl text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 capitalize">
-                {registry_name}
-              </caption>
-              <thead className="bg-accent sticky top-0 text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id} className="py-3 px-4 font-semibold">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-            </table>
-            <div className="w-full relative">
-              <List
-                height={listHeight}
-                itemCount={pageSize}
-                itemSize={50}
-                width="100%"
-              >
-                {({ index, style }) => {
-                  const row = table.getRowModel().rows[index];
-                  if (!row) {
-                    return (
-                      <div style={style} key={index} className="flex border-b border-gray-200 dark:border-gray-700" />
-                    );
-                  }
-                  return (
-                    <div
-                      style={style}
-                      key={row.id}
-                      className="flex border-b border-gray-200 dark:border-gray-700"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <div key={cell.id} className="py-3 px-4 flex-1">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </div>
+            
+            <div className="overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-muted/50 sticky top-0">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th key={header.id} className="py-3 px-4 text-left font-semibold text-sm">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </th>
                       ))}
-                    </div>
-                  );
-                }}
-              </List>
-              {isPending && (
-                <div className="absolute inset-0 bg-gray-200 bg-opacity-70 flex items-center justify-center z-10">
-                  <Loader />
-                </div>
-              )}
+                    </tr>
+                  ))}
+                </thead>
+              </table>
+              
+              <div className="relative">
+                <List
+                  height={listHeight}
+                  itemCount={pageSize}
+                  itemSize={50}
+                  width="100%"
+                >
+                  {({ index, style }) => {
+                    const row = table.getRowModel().rows[index];
+                    if (!row) {
+                      return (
+                        <div style={style} key={index} className="flex border-b border-border" />
+                      );
+                    }
+                    return (
+                      <div
+                        style={style}
+                        key={row.id}
+                        className="flex border-b border-border hover:bg-muted/50"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <div key={cell.id} className="py-3 px-4 flex-1 text-sm">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
+                </List>
+                {isPending && (
+                  <div className="absolute inset-0 bg-background/70 flex items-center justify-center z-10">
+                    <Loader />
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Pagination controls always appear below fixed table area */}
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center gap-3">
-                <button
-                  className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            
+            {/* Pagination */}
+            <div className="flex items-center justify-between p-4 border-t">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
                 >
-                  &lt;
-                </button>
-                <span>Page {page}</span>
-                <button
-                  className="cursor-pointer rounded-md px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">Page {page}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setPage((prev) => prev + 1)}
                   disabled={(data?.data?.records?.length ?? 0) < pageSize}
                 >
-                  &gt;
-                </button>
+                  Next
+                </Button>
               </div>
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
+                className="px-3 py-1 border border-input rounded-md bg-background text-sm"
               >
                 {[30, 40, 100].map((size) => (
                   <option key={size} value={size}>
@@ -243,7 +281,7 @@ const Records = () => {
           </div>
         )}
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
