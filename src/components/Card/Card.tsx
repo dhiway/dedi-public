@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { getCurrentEnvironment } from "../../utils/helper";
 
 type cardProps = {
   title: string;
@@ -52,6 +53,23 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
   // Generate a unique layout ID for this card based on namespace ID for shared element transitions
   const layoutId = `namespace-${namespace_id}`;
 
+  // const handleClick = () => {
+  //   // Set navigation data in localStorage for transition state
+  //   localStorage.setItem('lastClickedNamespace', JSON.stringify({
+  //     id: namespace_id,
+  //     name: title,
+  //     description: description,
+  //     timestamp: Date.now()
+  //   }));
+    
+  //   // Navigate with a slight delay to allow for click animation to complete
+  //   setTimeout(() => {
+  //     navigate({
+  //       to: "/registries/$namespace_id",
+  //       params: { namespace_id },
+  //     });
+  //   }, 100);
+  // };
   const handleClick = () => {
     // Set navigation data in localStorage for transition state
     localStorage.setItem('lastClickedNamespace', JSON.stringify({
@@ -60,12 +78,21 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
       description: description,
       timestamp: Date.now()
     }));
-    
-    // Navigate with a slight delay to allow for click animation to complete
+
+    // Get env and customEndpoint from URL
+    const currentEnv = getCurrentEnvironment();
+    const params = new URLSearchParams(window.location.search);
+    const customEndpoint = params.get("customEndpoint");
+
     setTimeout(() => {
       navigate({
         to: "/registries/$namespace_id",
         params: { namespace_id },
+        search: currentEnv === "custom" && customEndpoint
+          ? { env: currentEnv, customEndpoint }
+          : currentEnv
+            ? { env: currentEnv }
+            : undefined,
       });
     }, 100);
   };

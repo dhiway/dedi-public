@@ -36,7 +36,8 @@ const Registry = () => {
     
     
     const response = await axios.get(
-      `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
+      // `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
+      `${selectedApiEndpoint}/dedi/query/${namespace_id}`
     );
     return response.data;
   };
@@ -99,17 +100,36 @@ const Registry = () => {
     return null;
   }
 
-  const handleCardClick = (registry_name: string) => {
-    // Use current environment from global state
-    const currentEnv = getCurrentEnvironment();
+  // const handleCardClick = (registry_name: string) => {
+  //   // Use current environment from global state
+  //   const currentEnv = getCurrentEnvironment();
     
+  //   navigate({
+  //     to: "/records/$namespace_id/$registry_name",
+  //     params: {
+  //       namespace_id: namespace_id as string,
+  //       registry_name: registry_name,
+  //     },
+  //     search: currentEnv ? { env: currentEnv } : undefined
+  //   });
+  // };
+
+  const handleCardClick = (registry_name: string) => {
+    const currentEnv = getCurrentEnvironment();
+    const params = new URLSearchParams(window.location.search);
+    const customEndpoint = params.get("customEndpoint");
+
     navigate({
       to: "/records/$namespace_id/$registry_name",
       params: {
         namespace_id: namespace_id as string,
         registry_name: registry_name,
       },
-      search: currentEnv ? { env: currentEnv } : undefined
+      search: currentEnv === "custom" && customEndpoint
+        ? { env: currentEnv, customEndpoint }
+        : currentEnv
+          ? { env: currentEnv }
+          : undefined,
     });
   };
 

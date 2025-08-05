@@ -47,7 +47,8 @@ const Dashboard = () => {
   const nameSpaceGet = async () => {
     const endpoint = getApiEndpoint();
     const response = await axios.get(
-      `${endpoint}/dedi/internal/get-all-namepace?name=${debouncedSearchQuery}`
+      `${endpoint}/dedi/internal/get-all-namespace?name=${debouncedSearchQuery}&verificationStatus=verified`
+      // `${endpoint}/dedi/internal/get-all-namespace`
     );
     return response.data;
   };

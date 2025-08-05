@@ -32,8 +32,9 @@ const Records = () => {
   const fetchRecordsData = async () => {
     // Get the endpoint directly each time to ensure latest value
     const endpoint = getApiEndpoint();
-    
-    const url = `${endpoint}/dedi/query/${namespace_id}/${registry_name}?page=${page}&pageSize=${pageSize}`;
+    const state = 'live';
+
+    const url = `${endpoint}/dedi/query/${namespace_id}/${registry_name}?page=${page}&pageSize=${pageSize}&state=${state}`;
     const response = await axios.get(url);
     return response.data;
   };
