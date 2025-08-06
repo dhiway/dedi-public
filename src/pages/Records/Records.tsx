@@ -18,6 +18,7 @@ import { FixedSizeList as List } from "react-window";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Breadcrumb } from "../../components/ui/breadcrumb";
 
 const Records = () => {
   const [recordData, SetRecordData] = useState<Record<string, any>[]>([]);
@@ -41,6 +42,12 @@ const Records = () => {
     return response.data;
   };
 
+  const fetchNamespaceData = async () => {
+    const endpoint = getApiEndpoint();
+    const response = await axios.get(`${endpoint}/dedi/lookup/${namespace_id}`);
+    return response.data;
+  };
+
   const {
     isPending,
     isError,
@@ -53,6 +60,15 @@ const Records = () => {
     staleTime: 0,
     gcTime: 0,
     retry: false, // Don't retry on failure
+  });
+
+  const { data: namespaceData } = useQuery({
+    queryKey: ["namespaceData", namespace_id, window.location.search],
+    queryFn: fetchNamespaceData,
+    enabled: !!namespace_id,
+    staleTime: 0,
+    gcTime: 0,
+    retry: false,
   });
 
   useEffect(() => {
@@ -91,7 +107,7 @@ const Records = () => {
 
     return Array.from(allKeys).map((key: string) =>
       columnHelper.accessor(
-        (row: unknown) => (row as Record<string, unknown>)[key],
+        (row: unknown) => (row as Record<string, any>)[key],
         {
           id: key,
           header: key.charAt(0).toUpperCase() + key.slice(1),
@@ -123,13 +139,21 @@ const Records = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumb */}
+        <Breadcrumb 
+          items={[
+            { label: namespaceData?.data?.name || namespace_id },
+            { label: registry_name }
+          ]} 
+        />
+
         {/* Page Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={handleBackClick}
-            className="flex items-center gap-2 bg-background border-border hover:bg-accent"
+            className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Back

@@ -88,26 +88,18 @@ const Dashboard = () => {
       onSearchChange={(value) => setSearchQuery(value)}
     >
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <div className="relative">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-[hsl(var(--color-gradient-start))] to-[hsl(var(--color-gradient-end))] bg-clip-text text-transparent">
-              DeDi Explorer
-            </h1>
-            <div className="absolute -top-2 -left-2 w-16 h-16 bg-gradient-to-br from-[hsl(var(--color-primary))] to-[hsl(var(--color-info))] rounded-full opacity-10 blur-xl"></div>
-            <div className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br from-[hsl(var(--color-info))] to-[hsl(var(--color-primary))] rounded-full opacity-10 blur-lg"></div>
+        {/* Page Header with Search */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-12 gap-6">
+          <div className="text-left flex-1">
+            <h1 className="text-3xl font-bold mb-2">All Namespaces</h1>
+            <p className="text-muted-foreground max-w-2xl">
+              A namespace is a central repository of a publisher's records. All namespaces displayed here are verified and trusted.
+            </p>
           </div>
-          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-            Discover and explore decentralized namespaces with our intuitive interface. 
-            Each namespace serves as a secure repository for managing digital identities and records.
-          </p>
-        </div>
-
-        {/* Search Section */}
-        <div className="flex justify-center mb-12">
-          <div className="w-full max-w-lg relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--color-primary))] to-[hsl(var(--color-info))] rounded-xl opacity-5 blur-sm"></div>
-            <div className="relative bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-border/50 shadow-lg">
+          
+          {/* Search Section */}
+          <div className="flex-shrink-0 lg:self-start">
+            <div className="w-full lg:w-80">
               <SearchBar
                 value={searchQuery}
                 onChange={handleSearchChange}
@@ -177,32 +169,17 @@ const Dashboard = () => {
 
         {/* Namespace Grid */}
         {data && namespaceData.length > 0 && (
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--color-primary))] via-transparent to-[hsl(var(--color-info))] opacity-5 rounded-2xl"></div>
-            <div className="relative">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-1 flex-1 bg-gradient-to-r from-transparent via-[hsl(var(--color-primary))] to-transparent opacity-30 rounded-full"></div>
-                <h2 className="text-2xl font-semibold text-foreground px-4">Available Namespaces</h2>
-                <div className="h-1 flex-1 bg-gradient-to-r from-transparent via-[hsl(var(--color-primary))] to-transparent opacity-30 rounded-full"></div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-fr">
-                {namespaceData.map((item: namespace, index: number) => (
-                  <div key={item.namespace_id} className="group relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--color-primary))] to-[hsl(var(--color-info))] rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-sm"></div>
-                    <div className="relative">
-                      <Card
-                        namespace_id={item.namespace_id}
-                        title={item.name}
-                        description={item.description}
-                        imageUrl={item.meta?.logoimage}
-                        recordCount={item.record_count || item.registry_count}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
+            {namespaceData.map((item: namespace, index: number) => (
+              <Card
+                key={item.namespace_id}
+                namespace_id={item.namespace_id}
+                title={item.name}
+                description={item.description}
+                imageUrl={item.meta?.logoimage}
+                recordCount={item.record_count || item.registry_count}
+              />
+            ))}
           </div>
         )}
       </div>

@@ -1,66 +1,35 @@
 @import "tailwindcss";
 
-:root {
+@theme {
   --font-family-sans: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
-  /* Light mode - Professional Ocean Theme */
-  --color-background: hsl(210 25% 97%);
-  --color-foreground: hsl(215 30% 11%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(215 30% 11%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(215 30% 11%);
-  --color-primary: hsl(217 91% 60%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  --color-secondary: hsl(210 30% 94%);
-  --color-secondary-foreground: hsl(215 30% 11%);
-  --color-muted: hsl(210 30% 94%);
-  --color-muted-foreground: hsl(215 16% 46%);
-  --color-accent: hsl(210 30% 94%);
-  --color-accent-foreground: hsl(215 30% 11%);
-  --color-destructive: hsl(0 84% 60%);
-  --color-destructive-foreground: hsl(0 0% 100%);
-  --color-border: hsl(214 32% 88%);
-  --color-input: hsl(214 32% 88%);
-  --color-ring: hsl(217 91% 60%);
-  --radius: 0.75rem;
-  
-  /* Custom accent colors for visual interest */
-  --color-success: hsl(142 76% 36%);
-  --color-warning: hsl(38 92% 50%);
-  --color-info: hsl(199 89% 48%);
-  --color-gradient-start: hsl(217 91% 60%);
-  --color-gradient-end: hsl(199 89% 48%);
-}
 
-.dark {
-  /* Dark mode - Deep Ocean Theme */
-  --color-background: hsl(220 27% 8%);
-  --color-foreground: hsl(210 40% 95%);
-  --color-card: hsl(220 27% 10%);
-  --color-card-foreground: hsl(210 40% 95%);
-  --color-popover: hsl(220 27% 10%);
-  --color-popover-foreground: hsl(210 40% 95%);
-  --color-primary: hsl(217 91% 65%);
-  --color-primary-foreground: hsl(220 27% 8%);
-  --color-secondary: hsl(217 32% 15%);
-  --color-secondary-foreground: hsl(210 40% 95%);
-  --color-muted: hsl(217 32% 15%);
-  --color-muted-foreground: hsl(215 20% 70%);
-  --color-accent: hsl(217 32% 15%);
-  --color-accent-foreground: hsl(210 40% 95%);
-  --color-destructive: hsl(0 62% 50%);
-  --color-destructive-foreground: hsl(210 40% 95%);
-  --color-border: hsl(217 32% 20%);
-  --color-input: hsl(217 32% 20%);
-  --color-ring: hsl(217 91% 65%);
-  
-  /* Custom accent colors for dark mode */
-  --color-success: hsl(142 76% 45%);
-  --color-warning: hsl(38 92% 60%);
-  --color-info: hsl(199 89% 58%);
-  --color-gradient-start: hsl(217 91% 65%);
-  --color-gradient-end: hsl(199 89% 58%);
+  /* Matching dedi-publish color scheme */
+  --color-background: 0 0% 100%; /* White background like dedi-publish */
+  --color-foreground: 0 0% 3.9%; /* Dark text like dedi-publish */
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 0 0% 3.9%;
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 0 0% 3.9%;
+  --color-primary: 221.2 83.2% 53.3%; /* Blue primary like dedi-publish */
+  --color-primary-foreground: 210 40% 98%;
+  --color-secondary: 210 40% 96.1%; /* Light gray secondary */
+  --color-secondary-foreground: 222.2 47.4% 11.2%;
+  --color-muted: 210 40% 96.1%;
+  --color-muted-foreground: 215.4 16.3% 46.9%;
+  --color-accent: 210 40% 96.1%;
+  --color-accent-foreground: 222.2 47.4% 11.2%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 210 40% 98%;
+  --color-border: 214.3 31.8% 91.4%;
+  --color-input: 214.3 31.8% 91.4%;
+  --color-ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+
+  /* Header and Footer specific colors matching dedi-publish */
+  --color-header-bg: hsl(45 100% 96%); /* Amber-50 like dedi-publish */
+  --color-footer-bg: hsl(210 40% 96.1%); /* Light gray footer */
+  --color-header-text: hsl(0 0% 3.9%); /* Dark text on light header */
+  --color-footer-text: hsl(0 0% 3.9%); /* Dark text on light footer */
 }
 
 @layer base {
@@ -78,16 +47,8 @@
     margin: 0;
     min-width: 100vw;
     min-height: 100vh;
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-  }
-
-  body:not(.dark) {
-    background: linear-gradient(135deg, hsl(210 25% 97%) 0%, hsl(217 91% 97%) 20%, hsl(199 89% 97%) 100%);
-  }
-
-  .dark body {
-    background: linear-gradient(135deg, hsl(220 27% 8%) 0%, hsl(217 32% 10%) 50%, hsl(220 27% 12%) 100%);
+    background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+    color: hsl(var(--color-foreground));
   }
 
   h1 {
@@ -123,5 +84,86 @@
       font-size: 1.5rem;
       line-height: 2rem;
     }
+  }
+
+  /* Main content uses dark text on light background */
+  main {
+    color: hsl(var(--color-foreground));
+  }
+
+  /* Footer styling matching dedi-publish */
+  footer {
+    color: hsl(var(--color-footer-text));
+  }
+
+  footer * {
+    color: hsl(var(--color-footer-text)) !important;
+  }
+
+  footer button {
+    background-color: hsl(var(--color-primary)) !important;
+    color: hsl(var(--color-primary-foreground)) !important;
+    border-color: hsl(var(--color-primary)) !important;
+  }
+
+  footer button:hover {
+    background-color: hsl(var(--color-primary) / 0.9) !important;
+  }
+
+  /* Header styling matching dedi-publish amber theme */
+  header {
+    color: hsl(var(--color-header-text));
+  }
+
+  header * {
+    color: hsl(var(--color-header-text)) !important;
+  }
+
+  /* Custom button styling to override header text color */
+  header button[style*="background-color: #2563EB"] {
+    color: #F8FAFC !important;
+  }
+
+  header button[style*="background-color: #2563EB"] * {
+    color: #F8FAFC !important;
+  }
+
+  /* More specific override for custom blue buttons */
+  .custom-blue-button {
+    color: #F8FAFC !important;
+  }
+
+  .custom-blue-button * {
+    color: #F8FAFC !important;
+  }
+
+  header .custom-blue-button {
+    color: #F8FAFC !important;
+  }
+
+  header .custom-blue-button * {
+    color: #F8FAFC !important;
+  }
+
+  /* Override hover states for custom blue buttons */
+  .custom-blue-button:hover {
+    color: #F8FAFC !important;
+  }
+
+  .custom-blue-button:hover * {
+    color: #F8FAFC !important;
+  }
+
+  header .custom-blue-button:hover {
+    color: #F8FAFC !important;
+  }
+
+  header .custom-blue-button:hover * {
+    color: #F8FAFC !important;
+  }
+
+  /* DeDi Explorer text in primary blue color */
+  .dedi-explorer-title {
+    color: hsl(var(--color-primary)) !important;
   }
 }

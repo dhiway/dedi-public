@@ -13,6 +13,7 @@ import { getApiEndpoint, getCurrentEnvironment } from "../../utils/helper";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Breadcrumb } from "../../components/ui/breadcrumb";
 
 const Registry = () => {
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
@@ -22,6 +23,7 @@ const Registry = () => {
   const [filteredRegistries, setFilteredRegistries] = useState<registry[]>([]);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [nomatchFound, setNoMatchFound] = useState(false);
+  const [namespaceName, setNamespaceName] = useState<string>("");
 
   const registryDataGet = async () => {
     // Get the endpoint directly each time to ensure latest value
@@ -68,6 +70,26 @@ const Registry = () => {
     // safely use optional chaining to avoid errors if data or data.data is undefined
     setFilteredRegistries(data?.data?.registries || []);
   }, [data]);
+
+  // Get namespace name from localStorage (from clicked card) or API response
+  useEffect(() => {
+    const lastClickedNamespace = localStorage.getItem('lastClickedNamespace');
+    if (lastClickedNamespace) {
+      try {
+        const namespaceData = JSON.parse(lastClickedNamespace);
+        if (namespaceData.id === namespace_id) {
+          setNamespaceName(namespaceData.name);
+        }
+      } catch (error) {
+        console.error('Error parsing namespace data from localStorage:', error);
+      }
+    }
+    
+    // Fallback to API response if available
+    if (!namespaceName && data?.data?.namespace_name) {
+      setNamespaceName(data.data.namespace_name);
+    }
+  }, [namespace_id, data?.data?.namespace_name, namespaceName]);
 
   // Clean up timer on unmount
   useEffect(() => {
@@ -134,33 +156,38 @@ const Registry = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
+        {/* Breadcrumb */}
+        <Breadcrumb 
+          items={[
+            { label: namespaceName || namespace_id }
+          ]} 
+        />
+
+        {/* Page Header with Back Button, Title, and Search */}
         <div className="flex items-center gap-4 mb-8">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={handleBackClick}
-            className="flex items-center gap-2 bg-background border-border hover:bg-accent"
+            className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl font-bold">Registries</h1>
             <p className="text-muted-foreground">
               Browse registries in this namespace
             </p>
           </div>
-        </div>
-
-        {/* Search Section */}
-        <div className="flex justify-center mb-8">
-          <div className="w-full max-w-md">
-            <SearchBar
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search Registries"
-            />
+          <div className="flex-shrink-0">
+            <div className="w-80">
+              <SearchBar
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search Registries"
+              />
+            </div>
           </div>
         </div>
 
