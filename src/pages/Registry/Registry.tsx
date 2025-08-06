@@ -8,13 +8,14 @@ import { registry } from "../../types/registry";
 import { useQuery } from "@tanstack/react-query";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import Loader from "../../components/Loader/Loader";
-import DarkModeToggle from "../../components/DarkMode/DarkModeToggle";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import { getApiEndpoint, getCurrentEnvironment } from "../../utils/helper";
+import { MainLayout } from "../../components/layout/MainLayout";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Breadcrumb } from "../../components/ui/breadcrumb";
 
 const Registry = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,13 +23,7 @@ const Registry = () => {
   const [filteredRegistries, setFilteredRegistries] = useState<registry[]>([]);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [nomatchFound, setNoMatchFound] = useState(false);
-
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const scrollTop = scrollContainerRef.current.scrollTop;
-      setScrolled(scrollTop > 50);
-    }
-  };
+  const [namespaceName, setNamespaceName] = useState<string>("");
 
   const registryDataGet = async () => {
     // Get the endpoint directly each time to ensure latest value
@@ -36,7 +31,8 @@ const Registry = () => {
     
     
     const response = await axios.get(
-      `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
+      // `${selectedApiEndpoint}/dedi/query/${namespace_id}?name=${debouncedSearchQuery}`
+      `${selectedApiEndpoint}/dedi/query/${namespace_id}`
     );
     return response.data;
   };
@@ -75,6 +71,26 @@ const Registry = () => {
     setFilteredRegistries(data?.data?.registries || []);
   }, [data]);
 
+  // Get namespace name from localStorage (from clicked card) or API response
+  useEffect(() => {
+    const lastClickedNamespace = localStorage.getItem('lastClickedNamespace');
+    if (lastClickedNamespace) {
+      try {
+        const namespaceData = JSON.parse(lastClickedNamespace);
+        if (namespaceData.id === namespace_id) {
+          setNamespaceName(namespaceData.name);
+        }
+      } catch (error) {
+        console.error('Error parsing namespace data from localStorage:', error);
+      }
+    }
+    
+    // Fallback to API response if available
+    if (!namespaceName && data?.data?.namespace_name) {
+      setNamespaceName(data.data.namespace_name);
+    }
+  }, [namespace_id, data?.data?.namespace_name, namespaceName]);
+
   // Clean up timer on unmount
   useEffect(() => {
     return () => {
@@ -93,23 +109,42 @@ const Registry = () => {
         ToastUtils.error(axiosError.message);
       }
     }
-  }, [isError]);
+  }, [error, isError]);
 
   if (!namespace_id) {
     return null;
   }
 
-  const handleCardClick = (registry_name: string) => {
-    // Use current environment from global state
-    const currentEnv = getCurrentEnvironment();
+  // const handleCardClick = (registry_name: string) => {
+  //   // Use current environment from global state
+  //   const currentEnv = getCurrentEnvironment();
     
+  //   navigate({
+  //     to: "/records/$namespace_id/$registry_name",
+  //     params: {
+  //       namespace_id: namespace_id as string,
+  //       registry_name: registry_name,
+  //     },
+  //     search: currentEnv ? { env: currentEnv } : undefined
+  //   });
+  // };
+
+  const handleCardClick = (registry_name: string) => {
+    const currentEnv = getCurrentEnvironment();
+    const params = new URLSearchParams(window.location.search);
+    const customEndpoint = params.get("customEndpoint");
+
     navigate({
       to: "/records/$namespace_id/$registry_name",
       params: {
         namespace_id: namespace_id as string,
         registry_name: registry_name,
       },
-      search: currentEnv ? { env: currentEnv } : undefined
+      search: currentEnv === "custom" && customEndpoint
+        ? { env: currentEnv, customEndpoint }
+        : currentEnv
+          ? { env: currentEnv }
+          : undefined,
     });
   };
 
@@ -119,129 +154,108 @@ const Registry = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-primary dark:bg-primary text-text dark:text-text flex flex-col">
-      {/* Fixed navigation bar that appears when scrolled */}
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 bg-primary/95 dark:bg-primary/95 backdrop-blur-md border-b border-gray-200/40 dark:border-gray-700/30
-        transition-all duration-300 transform
-        ${scrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
-      >
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={handleBackClick}
-            className="p-2 rounded-full bg-gray-100/50 hover:bg-gray-200/80 dark:bg-gray-800/50 dark:hover:bg-gray-700/80 text-text hover:text-text/90 transition-colors duration-200 shadow-sm"
-          >
-            <span className="text-text dark:text-text">&larr;</span>
-          </button>
+    <MainLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumb */}
+        <Breadcrumb 
+          items={[
+            { label: namespaceName || namespace_id }
+          ]} 
+        />
 
-          <div className="w-full mx-auto" style={{ maxWidth: "calc(100% - 96px)" }}>
-            <SearchBar
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search Registries"
-            />
-          </div>
-
-          <div>
-            <DarkModeToggle />
-          </div>
-        </div>
-      </div>
-      
-      {/* Top static header with theme toggle and back button */}
-      <div className="w-full bg-primary dark:bg-primary border-b border-gray-200/40 dark:border-gray-700/30 py-3 px-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <button
+        {/* Page Header with Back Button, Title, and Search */}
+        <div className="flex items-center gap-4 mb-8">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleBackClick}
-            className="p-2 rounded-full bg-gray-100/50 hover:bg-gray-200/80 dark:bg-gray-800/50 dark:hover:bg-gray-700/80 text-text hover:text-text/90 transition-colors duration-200 shadow-sm"
+            className="flex items-center gap-2"
           >
-            <span className="text-text dark:text-text">&larr;</span>
-          </button>
-          
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Registries</h1>
-          
-          <DarkModeToggle />
-        </div>
-      </div>
-      
-      {/* Main content area */}
-      <div
-        ref={scrollContainerRef}
-        className="flex-1 w-full overflow-y-auto no-scrollbar pt-8"
-        onScroll={handleScroll}
-      >
-        <div className="container mx-auto px-4 md:px-6">
-          {/* Search Bar - centered, matching Directory.tsx */}
-          <div className="mb-8">
-            <SearchBar
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search Registries"
-            />
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold">Registries</h1>
+            <p className="text-muted-foreground">
+              Browse registries in this namespace
+            </p>
           </div>
-          
-          {/* Loading State */}
-          {isPending && (
-            <div className="p-5 flex text-center justify-center items-center h-[40%]">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
-            </div>
-          )}
-          
-          {/* Error State */}
-          {isError && !nomatchFound && (
-            <div className="p-5 overflow-y-auto justify-center flex flex-col text-center">
-              <img
-                src={errorimg}
-                alt="Error occurred"
-                className="w-full h-45 object-fit rounded-xl"
+          <div className="flex-shrink-0">
+            <div className="w-80">
+              <SearchBar
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search Registries"
               />
-              <p className="pt-5 text-text text-3xl font-bold dark:text-text">
-                Oops! Something went wrong
-              </p>
             </div>
-          )}
-          
-          {/* No Match Found State */}
-          {nomatchFound && (
-            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-              <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                <span className="text-4xl">🔍</span>
-              </div>
-              <p className="text-xl font-semibold text-text dark:text-text">
-                No match found
-              </p>
-              <p className="text-gray-500 dark:text-gray-400">
-                Try adjusting your search criteria
-              </p>
-            </div>
-          )}
-          
-          {/* Empty State */}
-          {filteredRegistries.length === 0 && !isPending && !isError && !nomatchFound && (
-            <div className="p-5 flex flex-col text-center justify-center items-center h-[50%]">
-              <div className="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                <span className="text-4xl">📁</span>
-              </div>
-              <p className="text-xl font-semibold text-text dark:text-text">
-                No registries found
-              </p>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
-                There are no registries in this namespace yet
-              </p>
-            </div>
-          )}
-          
-          {/* Card Group Title with line - only show when there are registries */}
-          {filteredRegistries.length > 0 && !isPending && !isError && (
-            <div className="mb-8 flex items-center justify-start gap-3">
-              <h2 className="text-xl font-semibold">Registries</h2>
-              <div className="h-px flex-1 translate-y-px bg-gradient-to-r from-gray-200/60 from-60% to-transparent dark:from-gray-800/40 dark:to-transparent"></div>
-            </div>
-          )}
+          </div>
+        </div>
 
-          {/* Registry Cards - Using grid for responsive 3-column layout */}
-          {filteredRegistries.length > 0 && !isPending && !isError && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Loading State */}
+        {isPending && (
+          <div className="flex justify-center items-center py-12">
+            <Loader />
+          </div>
+        )}
+
+        {/* Error State */}
+        {isError && !nomatchFound && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <img
+              src={errorimg}
+              alt="Error"
+              className="w-64 h-64 object-contain mb-6"
+            />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Oops! Something went wrong
+            </h2>
+            <p className="text-muted-foreground">
+              Please try again later or contact support if the problem persists.
+            </p>
+          </div>
+        )}
+
+        {/* No Match Found State */}
+        {nomatchFound && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
+              <span className="text-4xl">🔍</span>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              No match found
+            </h2>
+            <p className="text-muted-foreground">
+              Try adjusting your search criteria or browse all registries.
+            </p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {filteredRegistries.length === 0 && !isPending && !isError && !nomatchFound && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <img
+              src={norecords}
+              alt="No registries"
+              className="w-64 h-64 object-contain mb-6"
+            />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              No registries found
+            </h2>
+            <p className="text-muted-foreground">
+              There are no registries in this namespace yet.
+            </p>
+          </div>
+        )}
+
+        {/* Registry Cards */}
+        {filteredRegistries.length > 0 && !isPending && !isError && (
+          <>
+            <div className="mb-6 flex items-center gap-3">
+              <h2 className="text-xl font-semibold">Available Registries</h2>
+              <div className="h-px flex-1 bg-border"></div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRegistries.map((item: registry, index: number) => (
                 <div key={index} className="h-[70px]">
                   <CardRegistry
@@ -254,10 +268,10 @@ const Registry = () => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
