@@ -1,4 +1,3 @@
-import CardRegistry from "../../components/Card/CardRegistry";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import axios, { AxiosError } from "axios";
@@ -12,8 +11,11 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import { getApiEndpoint, getCurrentEnvironment } from "../../utils/helper";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import { Breadcrumb } from "../../components/ui/breadcrumb";
+import { TruncatedText } from "@/components/ui/truncated-text";
 
 const Registry = () => {
   const { namespace_id } = useParams({ from: "/registries/$namespace_id" });
@@ -257,15 +259,37 @@ const Registry = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRegistries.map((item: registry, index: number) => (
-                <div key={index} className="h-[70px]">
-                  <CardRegistry
-                    title={item.registry_name}
-                    description={item.description}
-                    record_count={item.record_count}
-                    updated_at={item.updated_at}
-                    onClick={() => handleCardClick(item.registry_name)}
-                  />
-                </div>
+                <Card 
+                  key={index} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer bg-white"
+                  onClick={() => handleCardClick(item.registry_name)}
+                >
+                  <CardHeader>
+                    <CardTitle className="truncate">{item.registry_name}</CardTitle>
+                    <CardDescription>
+                      <TruncatedText text={item.description} maxLength={100} />
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">
+                        Created: {new Date(item.created_at).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Updated: {new Date(item.updated_at).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Records: {item.record_count || 0}
+                      </p>
+                    </div>
+                    <div className="mt-2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100">
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        Active
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </>
