@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 interface BreadcrumbItem {
   label: string;
   href?: string;
+  onClick?: () => void;
 }
 
 interface BreadcrumbProps {
@@ -21,9 +22,18 @@ export function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
           {index > 0 && (
             <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
           )}
-          <span className="text-foreground font-medium">
-            {item.label}
-          </span>
+          {item.onClick ? (
+            <button
+              onClick={item.onClick}
+              className="text-foreground font-medium hover:text-primary cursor-pointer transition-colors"
+            >
+              {item.label}
+            </button>
+          ) : (
+            <span className="text-foreground font-medium">
+              {item.label}
+            </span>
+          )}
         </React.Fragment>
       ))}
     </nav>

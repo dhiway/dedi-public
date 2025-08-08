@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import ToastUtils from "../../components/Toast/ToastUtils";
 import Loader from "../../components/Loader/Loader";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { getApiEndpoint, getCurrentEnvironment } from "../../utils/helper";
+import { getApiEndpoint, getCurrentEnvironment, getEnvironmentOptions } from "../../utils/helper";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -135,6 +135,7 @@ const Registry = () => {
     const currentEnv = getCurrentEnvironment();
     const params = new URLSearchParams(window.location.search);
     const customEndpoint = params.get("customEndpoint");
+    const { developmentOption } = getEnvironmentOptions();
 
     navigate({
       to: "/records/$namespace_id/$registry_name",
@@ -142,7 +143,7 @@ const Registry = () => {
         namespace_id: namespace_id as string,
         registry_name: registry_name,
       },
-      search: currentEnv === "custom" && customEndpoint
+      search: currentEnv === developmentOption && customEndpoint
         ? { env: currentEnv, customEndpoint }
         : currentEnv
           ? { env: currentEnv }
