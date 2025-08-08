@@ -8,18 +8,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getCurrentEnvironment, setCurrentEnvironment } from "../../utils/helper";
-
-const API_OPTIONS = [
-  { label: "Sandbox", value: "sandbox" },
-  { label: "Beta", value: "beta" },
-  { label: "Dev", value: "dev" },
-  { label: "Custom", value: "custom" },
-];
+import { getCurrentEnvironment, setCurrentEnvironment, getEnvironmentOptions } from "../../utils/helper";
 
 const ApiDropdown = () => {
   const [currentEnv, setCurrentEnv] = useState(getCurrentEnvironment());
   const queryClient = useQueryClient();
+  
+  // Get dropdown options from environment variables
+  const { productionOption, developmentOption } = getEnvironmentOptions();
+  
+  const API_OPTIONS = [
+    { label: productionOption || "Production", value: productionOption || "Production" },
+    { label: developmentOption || "Development", value: developmentOption || "Development" },
+  ];
   
   // Initialize from the global environment state
   useEffect(() => {
@@ -29,17 +30,8 @@ const ApiDropdown = () => {
   const handleChange = (newEnv: string) => {
     const url = new URL(window.location.href);
     
-    if (newEnv === "custom") {
-      const customInput = window.prompt("Enter custom API endpoint (e.g., http://localhost:5106):");
-      if (customInput && customInput.trim() !== "") {
-        url.searchParams.set("customEndpoint", customInput.trim());
-      } else {
-        // if no valid input, revert to currentEnv without proceeding further
-        return;
-      }
-    } else {
-      url.searchParams.delete("customEndpoint");
-    }
+    // Remove any existing customEndpoint parameter since we're using fixed URLs now
+    url.searchParams.delete("customEndpoint");
     
     setCurrentEnvironment(newEnv);
     url.searchParams.set("env", newEnv);
@@ -50,7 +42,7 @@ const ApiDropdown = () => {
 
   const getCurrentLabel = () => {
     const option = API_OPTIONS.find(opt => opt.value === currentEnv);
-    return option ? option.label : "Custom";
+    return option ? option.label : (productionOption || "Production");
   };
 
   return (

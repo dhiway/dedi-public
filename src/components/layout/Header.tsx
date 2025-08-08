@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ApiDropdown from "../ApiDropdown/ApiDropdown";
+import { getCurrentEnvironment, getEnvironmentOptions } from "../../utils/helper";
 
 interface HeaderProps {
   showSearch?: boolean;
@@ -17,6 +17,30 @@ export function Header({
   onSearchChange,
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Helper function to get the publish endpoint based on current environment
+  const getPublishEndpoint = () => {
+    const currentEnv = getCurrentEnvironment();
+    const { developmentOption } = getEnvironmentOptions();
+    
+    if (currentEnv === developmentOption) {
+      return import.meta.env.VITE_DEVELOPMENT_PUBLISH_ENDPOINT || "http://localhost:5173";
+    } else {
+      return import.meta.env.VITE_PRODUCTION_PUBLISH_ENDPOINT || "https://publish.dedi.global";
+    }
+  };
+
+  // Helper function to get the hosted link based on current environment
+  const getHostedLink = () => {
+    const currentEnv = getCurrentEnvironment();
+    const { developmentOption } = getEnvironmentOptions();
+    
+    if (currentEnv === developmentOption) {
+      return import.meta.env.VITE_DEVELOPMENT_HOSTED_LINK || "http://localhost:3000";
+    } else {
+      return import.meta.env.VITE_PRODUCTION_HOSTED_LINK || "https://explorer.dedi.global";
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,11 +62,18 @@ export function Header({
       )}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <a 
+          href={getHostedLink()} 
+          className="flex items-center gap-2"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.href = getHostedLink();
+          }}
+        >
           <h2 className="text-xl font-bold dedi-explorer-title">
             DeDi Explorer
           </h2>
-        </Link>
+        </a>
 
         {/* Center search section - only show when scrolled and search is enabled */}
         {showSearch && isScrolled && (
@@ -62,7 +93,7 @@ export function Header({
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={() =>
-                window.open(import.meta.env.VITE_PUBLISH_ENDPOINT, "_blank")
+                window.open(getPublishEndpoint(), "_blank")
               }
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-3 gap-2 custom-blue-button"
               style={{

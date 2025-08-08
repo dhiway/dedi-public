@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { getCurrentEnvironment } from "../../utils/helper";
+import { getCurrentEnvironment, getEnvironmentOptions } from "../../utils/helper";
 import { Card as ShadcnCard, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type cardProps = {
@@ -83,12 +83,13 @@ const Card = ({ title, description, imageUrl, namespace_id, recordCount }: cardP
     const currentEnv = getCurrentEnvironment();
     const params = new URLSearchParams(window.location.search);
     const customEndpoint = params.get("customEndpoint");
+    const { developmentOption } = getEnvironmentOptions();
 
     setTimeout(() => {
       navigate({
         to: "/registries/$namespace_id",
         params: { namespace_id },
-        search: currentEnv === "custom" && customEndpoint
+        search: currentEnv === developmentOption && customEndpoint
           ? { env: currentEnv, customEndpoint }
           : currentEnv
             ? { env: currentEnv }

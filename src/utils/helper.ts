@@ -1,16 +1,24 @@
 // Global store for current environment
 let currentEnvironment: string | null = null;
 
+// Get dropdown options from environment variables
+const getDropdownOptions = () => {
+    const productionOption = import.meta.env.VITE_PRODUCTION_DROPDOWN_OPTION || "Production";
+    const developmentOption = import.meta.env.VITE_DEVELOPMENT_DROPDOWN_OPTION || "Development";
+    return { productionOption, developmentOption };
+};
+
 // Initialize the environment from URL on load
 export function initializeEnvironment() {
     const params = new URLSearchParams(window.location.search);
     const envParam = params.get("env");
+    const { productionOption, developmentOption } = getDropdownOptions();
     
-    // Update: allow custom as valid environment
-    if (envParam === "beta" || envParam === "dev" || envParam === "sandbox" || envParam === "custom") {
+    // Check if the environment parameter matches our configured options
+    if (envParam === productionOption || envParam === developmentOption) {
         currentEnvironment = envParam;
     } else {
-        currentEnvironment = "sandbox"; // Default
+        currentEnvironment = productionOption; // Default to production
     }
     
     return currentEnvironment;
@@ -21,13 +29,14 @@ export function getCurrentEnvironment(): string {
     if (currentEnvironment === null) {
         initializeEnvironment();
     }
-    return currentEnvironment || "sandbox";
+    const { productionOption } = getDropdownOptions();
+    return currentEnvironment || productionOption;
 }
 
 // Update the current environment
 export function setCurrentEnvironment(env: string) {
-    // Update: allow custom environment
-    if (env === "beta" || env === "dev" || env === "sandbox" || env === "custom") {
+    const { productionOption, developmentOption } = getDropdownOptions();
+    if (env === productionOption || env === developmentOption) {
         currentEnvironment = env;
     }
 }
@@ -57,20 +66,25 @@ export function normalization(inputString:string){
     return normalizedList.toString().replace(/,/g," ");
 }
 
+// Export function to get dropdown options for use in components
+export function getEnvironmentOptions() {
+    return getDropdownOptions();
+}
+
 export function getApiEndpoint(): string {
     const env = getCurrentEnvironment();
+    const { productionOption, developmentOption } = getDropdownOptions();
 
-    let endpoint = import.meta.env.VITE_API_SANDBOX_ENDPOINT || "https://sandbox.dedi.global";
+    let endpoint: string;
     
-    if (env === "custom") {
-        const params = new URLSearchParams(window.location.search);
-        const customEndpoint = params.get("customEndpoint");
-        endpoint = customEndpoint || endpoint;
-    } else if (env === "beta") {
-        endpoint = import.meta.env.VITE_API_BETA_ENDPOINT || "https://beta.dedi.global";
-    } else if (env === "dev") {
-        endpoint = import.meta.env.VITE_API_DEV_ENDPOINT || "https://dev.dedi.global";
+    if (env === developmentOption) {
+        endpoint = import.meta.env.VITE_DEVELOPMENT_BACKEND_URL || "http://localhost:5106";
+        console.log(`🔧 Using development backend URL: ${endpoint}`);
+    } else {
+        endpoint = import.meta.env.VITE_PRODUCTION_BACKEND_URL || "https://sandbox.dedi.global";
+        console.log(`🔧 Using production backend URL: ${endpoint}`);
     }
     
+    console.log(`🌐 API Endpoint: ${endpoint} (env: ${env})`);
     return endpoint;
 }

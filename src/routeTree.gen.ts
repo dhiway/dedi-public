@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as WatcherImport } from './routes/watcher'
 import { Route as RegistriesImport } from './routes/registries'
 import { Route as RecordsImport } from './routes/records'
+import { Route as RecordDetailsImport } from './routes/record-details'
 import { Route as RegistriesNamespaceidImport } from './routes/registries.$namespace_id'
 import { Route as RecordsNamespaceidRegistrynameImport } from './routes/records.$namespace_id.$registry_name'
 
@@ -40,6 +41,12 @@ const RegistriesRoute = RegistriesImport.update({
 const RecordsRoute = RecordsImport.update({
   id: '/records',
   path: '/records',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RecordDetailsRoute = RecordDetailsImport.update({
+  id: '/record-details',
+  path: '/record-details',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -71,6 +78,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/record-details': {
+      id: '/record-details'
+      path: '/record-details'
+      fullPath: '/record-details'
+      preLoaderRoute: typeof RecordDetailsImport
       parentRoute: typeof rootRoute
     }
     '/records': {
@@ -138,6 +152,7 @@ const RegistriesRouteWithChildren = RegistriesRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/record-details': typeof RecordDetailsRoute
   '/records': typeof RecordsRouteWithChildren
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
@@ -147,6 +162,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/record-details': typeof RecordDetailsRoute
   '/records': typeof RecordsRouteWithChildren
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
@@ -157,6 +173,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/record-details': typeof RecordDetailsRoute
   '/records': typeof RecordsRouteWithChildren
   '/registries': typeof RegistriesRouteWithChildren
   '/watcher': typeof WatcherRoute
@@ -168,6 +185,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/record-details'
     | '/records'
     | '/registries'
     | '/watcher'
@@ -176,6 +194,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/record-details'
     | '/records'
     | '/registries'
     | '/watcher'
@@ -184,6 +203,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/record-details'
     | '/records'
     | '/registries'
     | '/watcher'
@@ -194,6 +214,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  RecordDetailsRoute: typeof RecordDetailsRoute
   RecordsRoute: typeof RecordsRouteWithChildren
   RegistriesRoute: typeof RegistriesRouteWithChildren
   WatcherRoute: typeof WatcherRoute
@@ -201,6 +222,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  RecordDetailsRoute: RecordDetailsRoute,
   RecordsRoute: RecordsRouteWithChildren,
   RegistriesRoute: RegistriesRouteWithChildren,
   WatcherRoute: WatcherRoute,
@@ -217,6 +239,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/record-details",
         "/records",
         "/registries",
         "/watcher"
@@ -224,6 +247,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/record-details": {
+      "filePath": "record-details.tsx"
     },
     "/records": {
       "filePath": "records.tsx",
